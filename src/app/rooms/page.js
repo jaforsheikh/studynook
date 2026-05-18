@@ -23,7 +23,7 @@ export default function RoomsPage() {
         </div>
 
         {/* TOP BAR */}
-        <div className="mt-14 flex flex-col gap-4 rounded-3xl border border-emerald-900/30 bg-white/[0.03] p-6 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
+        <div className="mt-14 flex flex-col gap-4 rounded-3xl border border-emerald-900/30 bg-white/3 p-6 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
           
           <div>
             <h3 className="text-xl font-bold text-white">

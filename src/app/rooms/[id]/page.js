@@ -56,44 +56,36 @@ export default function RoomDetailsPage({ params }) {
                 priority
               />
             </div>
-
             <div className="mt-10">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">
                     {room.title}
                   </h1>
-
                   <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-400">
                     <span className="flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-emerald-400" />
                       {room.location}
                     </span>
-
                     <span className="flex items-center gap-2">
                       <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                       {room.rating} rating
                     </span>
-
                     <span className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-emerald-400" />
                       Up to {room.capacity} people
                     </span>
                   </div>
                 </div>
-
                 <span className="w-fit rounded-full bg-emerald-500/10 px-4 py-2 text-sm font-bold text-emerald-300">
                   {room.availableToday ? "Available Today" : "Currently Booked"}
                 </span>
               </div>
-
               <p className="mt-8 max-w-3xl text-lg leading-8 text-slate-300">
                 {room.description}
               </p>
-
               <div className="mt-10">
                 <h2 className="text-2xl font-black text-white">Amenities</h2>
-
                 <div className="mt-5 flex flex-wrap gap-3">
                   {room.amenities.map((item) => (
                     <span
@@ -107,7 +99,6 @@ export default function RoomDetailsPage({ params }) {
               </div>
             </div>
           </div>
-
           <aside className="h-fit rounded-4xl border border-emerald-900/40 bg-white/3 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl lg:sticky lg:top-24">
             <div className="flex items-end justify-between">
               <div>
@@ -141,7 +132,6 @@ export default function RoomDetailsPage({ params }) {
                 High-speed Wi-Fi included
               </div>
             </div>
-
             <div className="mt-8 space-y-4">
               <label className="block">
                 <span className="mb-2 block text-sm font-semibold text-slate-300">
