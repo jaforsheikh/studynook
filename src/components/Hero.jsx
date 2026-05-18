@@ -86,12 +86,13 @@ export default function Hero() {
         <div className="relative">
           <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-emerald-200 blur-3xl"></div>
 
-          <div className="relative overflow-hidden rounded-4xlborder border-white/40 bg-white shadow-2xl shadow-slate-900/20">
+          <div className="relative overflow-hidden rounded-4xl border border-white/40 bg-white shadow-2xl shadow-slate-900/20">
             <Image
               src="/assets/hero.png"
               alt="Study Room"
               width={900}
               height={700}
+              border-radius={32}
               className="h-162 w-full object-cover"
               priority
             />
