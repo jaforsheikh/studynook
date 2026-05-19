@@ -1,167 +1,196 @@
-import Image from "next/image";
-import Link from "next/link";
+"use client";
+
+import { useMemo, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { rooms } from "@/data/rooms";
-import BookingCalendar from "@/components/rooms/BookingCalendar";
 
-import {
-  ArrowLeft,
-  Layers3,
-  MapPin,
-  Star,
-  Users,
-  Wifi,
-} from "lucide-react";
+import RoomCard from "@/components/rooms/RoomCard";
+import RoomFilters from "@/components/rooms/RoomFilters";
 
-export default async function RoomDetailsPage({ params }) {
-  const { id } = await params;
+export default function RoomsPage() {
+  const searchParams = useSearchParams();
 
-  const room = rooms.find((item) => item.slug === id);
+  const [search, setSearch] = useState("");
+  const [location, setLocation] = useState("");
+  const [capacity, setCapacity] = useState("");
+  const [activeFilter, setActiveFilter] = useState("");
 
-  if (!room) {
-    return (
-      <main className="min-h-screen bg-[#06110e] px-4 py-24 text-white">
-        <div className="mx-auto max-w-4xl">
-          <h1 className="text-4xl font-black">Room not found</h1>
+  useEffect(() => {
+    const queryLocation = searchParams.get("location") || "";
+    const queryCapacity = searchParams.get("capacity") || "";
+    const querySearch = searchParams.get("search") || "";
 
-          <Link
-            href="/rooms"
-            className="mt-6 inline-flex items-center gap-2 text-emerald-300"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to rooms
-          </Link>
-        </div>
-      </main>
-    );
-  }
+    setLocation(queryLocation);
+    setCapacity(queryCapacity);
+    setSearch(querySearch);
+  }, [searchParams]);
+
+  const filteredRooms = useMemo(() => {
+    return rooms.filter((room) => {
+      const matchSearch = room.title
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+      const matchLocation = location
+        ? room.location.toLowerCase().includes(location.toLowerCase())
+        : true;
+
+      let matchCapacity = true;
+
+      if (capacity === "1") {
+        matchCapacity = room.capacity === 1;
+      }
+
+      if (capacity === "1-2") {
+        matchCapacity = room.capacity >= 1 && room.capacity <= 2;
+      }
+
+      if (capacity === "2-4") {
+        matchCapacity = room.capacity >= 2 && room.capacity <= 4;
+      }
+
+      if (capacity === "4-6") {
+        matchCapacity = room.capacity >= 4 && room.capacity <= 6;
+      }
+
+      if (capacity === "5") {
+        matchCapacity = room.capacity >= 5;
+      }
+
+      if (capacity === "6-10") {
+        matchCapacity = room.capacity >= 6 && room.capacity <= 10;
+      }
+
+      if (capacity === "10") {
+        matchCapacity = room.capacity >= 10;
+      }
+
+      let matchQuickFilter = true;
+
+      if (activeFilter === "available") {
+        matchQuickFilter = room.availableToday === true;
+      }
+
+      if (activeFilter === "quiet") {
+        matchQuickFilter = room.amenities.includes("Quiet Zone");
+      }
+
+      if (activeFilter === "group") {
+        matchQuickFilter = room.capacity >= 4;
+      }
+
+      if (activeFilter === "premium") {
+        matchQuickFilter = room.price >= 300;
+      }
+
+      return matchSearch && matchLocation && matchCapacity && matchQuickFilter;
+    });
+  }, [search, location, capacity, activeFilter]);
+
+  const quickButtons = [
+    { label: "Available Today", value: "available" },
+    { label: "Quiet Zone", value: "quiet" },
+    { label: "Group Study", value: "group" },
+    { label: "Premium", value: "premium" },
+  ];
+
+  const clearFilters = () => {
+    setSearch("");
+    setLocation("");
+    setCapacity("");
+    setActiveFilter("");
+  };
 
   return (
     <main className="min-h-screen bg-[#06110e] py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <Link
-          href="/rooms"
-          className="inline-flex items-center gap-2 text-sm font-bold text-slate-300 hover:text-emerald-300"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to all rooms
-        </Link>
+        <div className="max-w-3xl">
+          <span className="rounded-full border border-emerald-800/40 bg-emerald-900/20 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">
+            Study Spaces
+          </span>
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-[1.35fr_0.75fr]">
+          <h1 className="mt-6 text-5xl font-black tracking-tight text-white">
+            Explore All Study Rooms
+          </h1>
+
+          <p className="mt-5 text-lg leading-8 text-slate-400">
+            Discover modern libraries, collaborative rooms, silent spaces, and
+            premium study environments built for productivity.
+          </p>
+        </div>
+
+        <div className="mt-14">
+          <RoomFilters
+            search={search}
+            setSearch={setSearch}
+            location={location}
+            setLocation={setLocation}
+            capacity={capacity}
+            setCapacity={setCapacity}
+          />
+        </div>
+
+        <div className="mt-10 flex flex-col gap-4 rounded-[28px] border border-emerald-900/30 bg-white/[0.03] p-6 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
           <div>
-            <div className="overflow-hidden rounded-[32px] border border-emerald-900/40">
-              <Image
-                src={room.image}
-                alt={room.title}
-                width={1200}
-                height={800}
-                className="h-[520px] w-full object-cover"
-                priority
-              />
-            </div>
+            <h3 className="text-2xl font-black text-white">
+              {filteredRooms.length} Rooms Found
+            </h3>
 
-            <div className="mt-10">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">
-                    {room.title}
-                  </h1>
-
-                  <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-400">
-                    <span className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-emerald-400" />
-                      {room.location}
-                    </span>
-
-                    <span className="flex items-center gap-2">
-                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      {room.rating} rating
-                    </span>
-
-                    <span className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-emerald-400" />
-                      Up to {room.capacity} people
-                    </span>
-                  </div>
-                </div>
-
-                <span className="w-fit rounded-full bg-emerald-500/10 px-4 py-2 text-sm font-bold text-emerald-300">
-                  {room.availableToday ? "Available Today" : "Currently Booked"}
-                </span>
-              </div>
-
-              <p className="mt-8 max-w-3xl text-lg leading-8 text-slate-300">
-                {room.description}
-              </p>
-
-              <div className="mt-10 grid gap-4 sm:grid-cols-3">
-                <div className="rounded-3xl border border-emerald-900/30 bg-white/[0.03] p-5">
-                  <Layers3 className="h-5 w-5 text-emerald-400" />
-                  <p className="mt-3 text-sm text-slate-400">Floor</p>
-                  <h3 className="mt-1 font-black text-white">{room.floor}</h3>
-                </div>
-
-                <div className="rounded-3xl border border-emerald-900/30 bg-white/[0.03] p-5">
-                  <Users className="h-5 w-5 text-emerald-400" />
-                  <p className="mt-3 text-sm text-slate-400">Capacity</p>
-                  <h3 className="mt-1 font-black text-white">
-                    {room.capacity} People
-                  </h3>
-                </div>
-
-                <div className="rounded-3xl border border-emerald-900/30 bg-white/[0.03] p-5">
-                  <Wifi className="h-5 w-5 text-emerald-400" />
-                  <p className="mt-3 text-sm text-slate-400">Internet</p>
-                  <h3 className="mt-1 font-black text-white">
-                    High-speed Wi-Fi
-                  </h3>
-                </div>
-              </div>
-
-              <div className="mt-10">
-                <h2 className="text-2xl font-black text-white">Amenities</h2>
-
-                <div className="mt-5 flex flex-wrap gap-3">
-                  {room.amenities.map((item) => (
-                    <span
-                      key={item}
-                      className="rounded-full border border-emerald-800/40 bg-emerald-900/20 px-4 py-2 text-sm font-semibold text-emerald-100"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <p className="mt-2 text-sm text-slate-400">
+              Real-time updated availability and pricing
+            </p>
           </div>
 
-          <aside className="h-fit lg:sticky lg:top-24">
-            <BookingCalendar room={room} />
+          <div className="flex flex-wrap gap-3">
+            {quickButtons.map((item) => (
+              <button
+                key={item.value}
+                onClick={() =>
+                  setActiveFilter(activeFilter === item.value ? "" : item.value)
+                }
+                className={`rounded-2xl border px-5 py-3 text-sm font-semibold transition ${
+                  activeFilter === item.value
+                    ? "border-emerald-500 bg-emerald-500 text-white"
+                    : "border-emerald-900/40 text-slate-300 hover:border-emerald-700 hover:text-white"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
 
-            <div className="mt-6 rounded-[32px] border border-emerald-900/40 bg-white/[0.03] p-6 backdrop-blur-xl">
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Listed By
-              </p>
-
-              <div className="mt-4">
-                <h4 className="font-black text-white">{room.owner.name}</h4>
-                <p className="mt-1 text-sm text-slate-400">
-                  {room.owner.email}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-[32px] border border-emerald-900/40 bg-white/[0.03] p-6 backdrop-blur-xl">
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Booking Safety
-              </p>
-
-              <p className="mt-3 text-sm leading-7 text-slate-400">
-                Your selected time slots will be verified by the backend before
-                final booking confirmation.
-              </p>
-            </div>
-          </aside>
+            {(search || location || capacity || activeFilter) && (
+              <button
+                onClick={clearFilters}
+                className="rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
+
+        {filteredRooms.length > 0 ? (
+          <div className="mt-14 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+            {filteredRooms.map((room) => (
+              <RoomCard key={room.id} room={room} />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-14 rounded-4xl border border-emerald-900/30 bg-white/3 p-12 text-center">
+            <h2 className="text-3xl font-black text-white">No rooms found</h2>
+
+            <p className="mt-3 text-slate-400">
+              Try changing your search, location, capacity, or quick filters. 
+            </p>
+
+            <button
+              onClick={clearFilters}
+              className="mt-6 rounded-2xl bg-amber-400 px-6 py-4 text-sm font-black text-slate-950 hover:bg-amber-300"
+            >
+              Clear Filters
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );
