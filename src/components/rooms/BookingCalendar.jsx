@@ -55,11 +55,11 @@ export default function BookingCalendar({ room }) {
           <CalendarDays className="h-5 w-5 text-emerald-400" />
 
           <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full bg-transparent text-sm text-white outline-none"
-          />
+  type="date"
+  value={date}
+  onChange={(e) => setDate(e.target.value)}
+  className="w-full bg-transparent text-sm text-white outline-none [color-scheme:dark]"
+/>
         </div>
       </label>
 

@@ -103,6 +103,15 @@ export default function LoginPage() {
           </button>
         </form>
 
+{/* google login  */}
+<a
+  href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
+  className="mt-4 flex w-full items-center justify-center gap-3 rounded-2xl border border-emerald-900/40 bg-white px-6 py-4 text-sm font-black text-slate-950 transition hover:bg-slate-100"
+>
+  <span className="text-lg">G</span>
+  Continue with Google
+</a>
+
         {/* FOOTER */}
         <div className="mt-8 text-center">
           <p className="text-sm text-slate-400">

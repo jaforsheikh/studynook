@@ -1,6 +1,7 @@
 export const rooms = [
   {
-    id: "quiet-pod-3a",
+    id: 1,
+    slug: "quiet-pod-3a",
     title: "Quiet Pod 3A",
     location: "Dhanmondi, Dhaka",
     floor: "3rd Floor",
@@ -16,11 +17,11 @@ export const rooms = [
     owner: {
       name: "Maya Chen",
       email: "maya@studynook.demo",
-      avatar: "/assets/owners/maya.jpg",
     },
   },
   {
-    id: "group-studio-west",
+    id: 2,
+    slug: "group-studio-west",
     title: "Group Studio West",
     location: "Gulshan, Dhaka",
     floor: "2nd Floor",
@@ -32,15 +33,15 @@ export const rooms = [
     image: "/assets/rooms/group-studio.jpg",
     description:
       "Bright corner studio with a large whiteboard wall, ideal for project teams and study groups.",
-    amenities: ["Whiteboard", "Wi-Fi", "Projector"],
+    amenities: ["Whiteboard", "Wi-Fi", "Projector", "Power Outlets"],
     owner: {
-      name: "Arif Rahman",
-      email: "arif@studynook.demo",
-      avatar: "/assets/owners/arif.jpg",
+      name: "Maya Chen",
+      email: "maya@studynook.demo",
     },
   },
   {
-    id: "atrium-reading-nook",
+    id: 3,
+    slug: "atrium-reading-nook",
     title: "Atrium Reading Nook",
     location: "Banani, Dhaka",
     floor: "1st Floor",
@@ -56,11 +57,11 @@ export const rooms = [
     owner: {
       name: "Nusrat Jahan",
       email: "nusrat@studynook.demo",
-      avatar: "/assets/owners/nusrat.jpg",
     },
   },
   {
-    id: "innovation-lab-b",
+    id: 4,
+    slug: "innovation-lab-b",
     title: "Innovation Lab B",
     location: "Uttara, Dhaka",
     floor: "4th Floor",
@@ -76,11 +77,11 @@ export const rooms = [
     owner: {
       name: "Tanvir Hasan",
       email: "tanvir@studynook.demo",
-      avatar: "/assets/owners/tanvir.jpg",
     },
   },
   {
-    id: "silent-carrel-12",
+    id: 5,
+    slug: "silent-carrel-12",
     title: "Silent Carrel 12",
     location: "Mirpur, Dhaka",
     floor: "Basement",
@@ -96,11 +97,11 @@ export const rooms = [
     owner: {
       name: "Sadia Islam",
       email: "sadia@studynook.demo",
-      avatar: "/assets/owners/sadia.jpg",
     },
   },
   {
-    id: "cedar-conference-room",
+    id: 6,
+    slug: "cedar-conference-room",
     title: "Cedar Conference Room",
     location: "Mohakhali, Dhaka",
     floor: "2nd Floor",
@@ -116,92 +117,88 @@ export const rooms = [
     owner: {
       name: "Rafi Ahmed",
       email: "rafi@studynook.demo",
-      avatar: "/assets/owners/rafi.jpg",
     },
   },
   {
-  id: "skyline-focus-suite",
-  title: "Skyline Focus Suite",
-  location: "Bashundhara, Dhaka",
-  floor: "8th Floor",
-  price: 420,
-  capacity: 5,
-  bookings: 15,
-  rating: 4.9,
-  availableToday: true,
-  image: "/assets/rooms/skyline-suite.jpg",
-  description:
-    "Premium skyline-facing focus suite designed for deep work, mentoring sessions, and private study.",
-  amenities: ["Wi-Fi", "Air Conditioning", "Coffee"],
-  owner: {
-    name: "Sabbir Khan",
-    email: "sabbir@studynook.demo",
-    avatar: "/assets/owners/sabbir.jpg",
+    id: 7,
+    slug: "skyline-focus-suite",
+    title: "Skyline Focus Suite",
+    location: "Bashundhara, Dhaka",
+    floor: "8th Floor",
+    price: 420,
+    capacity: 5,
+    bookings: 15,
+    rating: 4.9,
+    availableToday: true,
+    image: "/assets/rooms/skyline-suite.jpg",
+    description:
+      "Premium skyline-facing focus suite designed for deep work, mentoring sessions, and private study.",
+    amenities: ["Wi-Fi", "Air Conditioning", "Coffee"],
+    owner: {
+      name: "Sabbir Khan",
+      email: "sabbir@studynook.demo",
+    },
   },
-},
-
-{
-  id: "green-leaf-study-hub",
-  title: "Green Leaf Study Hub",
-  location: "Farmgate, Dhaka",
-  floor: "5th Floor",
-  price: 140,
-  capacity: 4,
-  bookings: 19,
-  rating: 4.7,
-  availableToday: true,
-  image: "/assets/rooms/green-leaf.jpg",
-  description:
-    "Nature-inspired collaborative room with natural lighting and relaxing greenery atmosphere.",
-  amenities: ["Wi-Fi", "Quiet Zone", "Whiteboard"],
-  owner: {
-    name: "Tasnia Noor",
-    email: "tasnia@studynook.demo",
-    avatar: "/assets/owners/tasnia.jpg",
+  {
+    id: 8,
+    slug: "green-leaf-study-hub",
+    title: "Green Leaf Study Hub",
+    location: "Farmgate, Dhaka",
+    floor: "5th Floor",
+    price: 140,
+    capacity: 4,
+    bookings: 19,
+    rating: 4.7,
+    availableToday: true,
+    image: "/assets/rooms/green-leaf.jpg",
+    description:
+      "Nature-inspired collaborative room with natural lighting and relaxing greenery atmosphere.",
+    amenities: ["Wi-Fi", "Quiet Zone", "Whiteboard"],
+    owner: {
+      name: "Tasnia Noor",
+      email: "tasnia@studynook.demo",
+    },
   },
-},
-
-{
-  id: "midnight-reading-lounge",
-  title: "Midnight Reading Lounge", 
-  location: "Wari, Dhaka",
-  floor: "1st Floor",
-  price: 110,
-  capacity: 3,
-  bookings: 28,
-  rating: 4.8,
-  availableToday: false,
-  image: "/assets/rooms/midnight-lounge.jpg",
-  description:
-    "Warm and quiet reading lounge ideal for late-night study sessions and exam preparation.",
-  amenities: ["Wi-Fi", "Power Outlets", "Coffee"],
-  owner: {
-    name: "Imran Hossain",
-    email: "imran@studynook.demo",
-    avatar: "/assets/owners/imran.jpg",
+  {
+    id: 9,
+    slug: "midnight-reading-lounge",
+    title: "Midnight Reading Lounge",
+    location: "Wari, Dhaka",
+    floor: "1st Floor",
+    price: 110,
+    capacity: 3,
+    bookings: 28,
+    rating: 4.8,
+    availableToday: false,
+    image: "/assets/rooms/midnight-lounge.jpg",
+    description:
+      "Warm and quiet reading lounge ideal for late-night study sessions and exam preparation.",
+    amenities: ["Wi-Fi", "Power Outlets", "Coffee"],
+    owner: {
+      name: "Imran Hossain",
+      email: "imran@studynook.demo",
+    },
   },
-},
-
-{
-  id: "brainstorm-studio-x",
-  title: "Brainstorm Studio X",
-  location: "Tejgaon, Dhaka",
-  floor: "6th Floor",
-  price: 390,
-  capacity: 12,
-  bookings: 7,
-  rating: 4.6,
-  availableToday: true,
-  image: "/assets/rooms/brainstorm-studio.jpg",
-  description:
-    "Large collaborative innovation room with projector setup, conference seating, and brainstorming walls.",
-  amenities: ["Projector", "Whiteboard", "Wi-Fi"],
-  owner: {
-    name: "Adnan Karim",
-    email: "adnan@studynook.demo",
-    avatar: "/assets/owners/adnan.jpg",
+  {
+    id: 10,
+    slug: "brainstorm-studio-x",
+    title: "Brainstorm Studio X",
+    location: "Tejgaon, Dhaka",
+    floor: "6th Floor",
+    price: 390,
+    capacity: 12,
+    bookings: 7,
+    rating: 4.6,
+    availableToday: true,
+    image: "/assets/rooms/brainstorm-studio.jpg",
+    description:
+      "Large collaborative innovation room with projector setup, conference seating, and brainstorming walls.",
+    amenities: ["Projector", "Whiteboard", "Wi-Fi"],
+    owner: {
+      name: "Adnan Karim",
+      email: "adnan@studynook.demo",
+    },
   },
-},
 ];
 
-export const featuredRooms = rooms.slice(0, 3);
+export const featuredRooms = rooms.slice(0, 6);

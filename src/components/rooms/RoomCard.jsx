@@ -1,25 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  MapPin,
-  Users,
-  Star,
-  Wifi,
-  Layers3,
-} from "lucide-react";
+import { Layers3, MapPin, Star, Users, Wifi } from "lucide-react";
 
 export default function RoomCard({ room }) {
   return (
     <div className="group overflow-hidden rounded-[28px] border border-emerald-950/40 bg-[#071411] shadow-xl shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-emerald-700/40">
-      
-      {/* IMAGE */}
       <div className="relative overflow-hidden">
         <Image
           src={room.image}
           alt={room.title}
           width={700}
           height={500}
-          className="h-60 w-full object-cover transition duration-500 group-hover:scale-105"
+          className="h-[240px] w-full object-cover transition duration-500 group-hover:scale-105"
         />
 
         <div className="absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
@@ -31,7 +23,6 @@ export default function RoomCard({ room }) {
         </div>
       </div>
 
-      {/* CONTENT */}
       <div className="p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -55,7 +46,6 @@ export default function RoomCard({ room }) {
           {room.description}
         </p>
 
-        {/* INFO */}
         <div className="mt-5 flex flex-wrap gap-4 text-sm text-slate-300">
           <div className="flex items-center gap-2">
             <Layers3 className="h-4 w-4 text-emerald-400" />
@@ -73,11 +63,10 @@ export default function RoomCard({ room }) {
           </div>
         </div>
 
-        {/* AMENITIES */}
         <div className="mt-5 flex flex-wrap gap-2">
-          {room.amenities.map((item, index) => (
+          {room.amenities.map((item) => (
             <span
-              key={index}
+              key={item}
               className="rounded-full border border-emerald-900/50 bg-emerald-950/30 px-3 py-1 text-xs font-medium text-emerald-100"
             >
               {item}
@@ -85,9 +74,8 @@ export default function RoomCard({ room }) {
           ))}
         </div>
 
-        {/* BUTTON */}
         <Link
-          href={`/rooms/${room.id}`}
+          href={`/rooms/${room.slug}`}
           className="mt-6 flex items-center justify-center rounded-2xl bg-amber-400 px-5 py-4 text-sm font-bold text-slate-950 transition hover:bg-amber-300"
         >
           View Details
