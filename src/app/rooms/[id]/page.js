@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { rooms } from "@/data/rooms";
+import BookingCalendar from "@/components/rooms/BookingCalendar";
+
 import {
   ArrowLeft,
   CalendarDays,
@@ -99,91 +101,20 @@ export default function RoomDetailsPage({ params }) {
               </div>
             </div>
           </div>
-          <aside className="h-fit rounded-4xl border border-emerald-900/40 bg-white/3 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl lg:sticky lg:top-24">
-            <div className="flex items-end justify-between">
-              <div>
-                <p className="text-sm text-slate-400">Starting from</p>
-                <h3 className="text-4xl font-black text-amber-400">
-                  ৳{room.price}
-                  <span className="text-base font-semibold text-slate-400">
-                    /hr
-                  </span>
-                </h3>
-              </div>
+<aside className="h-fit lg:sticky lg:top-24">
+  <BookingCalendar room={room} />
 
-              <div className="rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-bold text-emerald-300">
-                {room.bookings} bookings
-              </div>
-            </div>
+  <div className="mt-6 rounded-32 border border-emerald-900/40 bg-white/3 p-6 backdrop-blur-xl">
+    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+      Listed By
+    </p>
 
-            <div className="mt-8 grid gap-4">
-              <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/30 bg-[#06110e] px-4 py-4 text-slate-300">
-                <Layers3 className="h-5 w-5 text-emerald-400" />
-                {room.floor}
-              </div>
-
-              <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/30 bg-[#06110e] px-4 py-4 text-slate-300">
-                <Users className="h-5 w-5 text-emerald-400" />
-                Up to {room.capacity} people
-              </div>
-
-              <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/30 bg-[#06110e] px-4 py-4 text-slate-300">
-                <Wifi className="h-5 w-5 text-emerald-400" />
-                High-speed Wi-Fi included
-              </div>
-            </div>
-            <div className="mt-8 space-y-4">
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-slate-300">
-                  Booking Date
-                </span>
-                <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/40 bg-[#06110e] px-4 py-4">
-                  <CalendarDays className="h-5 w-5 text-emerald-400" />
-                  <input
-                    type="date"
-                    className="w-full bg-transparent text-sm text-white outline-none"
-                  />
-                </div>
-              </label>
-
-              <div className="grid grid-cols-2 gap-4">
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-slate-300">
-                    Start Time
-                  </span>
-                  <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/40 bg-[#06110e] px-4 py-4">
-                    <Clock className="h-5 w-5 text-emerald-400" />
-                    <input
-                      type="time"
-                      className="w-full bg-transparent text-sm text-white outline-none"
-                    />
-                  </div>
-                </label>
-
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-slate-300">
-                    End Time
-                  </span>
-                  <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/40 bg-[#06110e] px-4 py-4">
-                    <Clock className="h-5 w-5 text-emerald-400" />
-                    <input
-                      type="time"
-                      className="w-full bg-transparent text-sm text-white outline-none"
-                    />
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <button className="mt-8 w-full rounded-2xl bg-amber-400 px-6 py-4 text-sm font-black text-slate-950 transition hover:bg-amber-300">
-              Login to Book
-            </button>
-
-            <p className="mt-4 text-center text-xs text-slate-500">
-              Real-time availability and conflict checking will be handled by
-              backend API.
-            </p>
-          </aside>
+    <div className="mt-4">
+      <h4 className="font-black text-white">{room.owner.name}</h4>
+      <p className="mt-1 text-sm text-slate-400">{room.owner.email}</p>
+    </div>
+  </div>
+</aside>
         </div>
       </div>
     </main>
