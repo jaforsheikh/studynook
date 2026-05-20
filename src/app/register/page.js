@@ -34,9 +34,7 @@ export default function RegisterPage() {
   }, [password]);
 
   const isPasswordValid =
-    passwordRules.length &&
-    passwordRules.uppercase &&
-    passwordRules.lowercase;
+    passwordRules.length && passwordRules.uppercase && passwordRules.lowercase;
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -47,54 +45,41 @@ export default function RegisterPage() {
     }
 
     try {
-      await authClient.signUp.email({
+      const res = await authClient.signUp.email({
         name,
         email,
         password,
       });
 
-      /*
-      TEMP LOCAL STORAGE
-      Later Better Auth session will fully handle this
-      */
-
-      localStorage.setItem(
-        "studynook-user",
-        JSON.stringify({
-          name,
-          email,
-        })
-      );
+      if (res?.error) {
+        toast.error(res.error.message || "Registration failed.");
+        return;
+      }
 
       toast.success("Account created successfully.");
 
-      router.push("/dashboard");
+      setTimeout(() => {
+        router.push("/dashboard");
+        router.refresh();
+      }, 500);
     } catch (error) {
       console.log(error);
-
       toast.error("Registration failed.");
     }
   };
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#06110e] px-4 py-20">
-      
-      {/* BG EFFECTS */}
-      <div className="absolute left-0 top-0 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl"></div>
+      <div className="absolute left-0 top-0 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
+      <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
 
-      <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl"></div>
-
-      {/* CARD */}
       <div className="relative w-full max-w-md overflow-hidden rounded-[36px] border border-emerald-900/30 bg-white/[0.04] p-8 shadow-2xl shadow-black/30 backdrop-blur-xl">
-
-        {/* LOGO */}
         <div className="flex justify-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-500 text-2xl font-black text-white shadow-lg shadow-emerald-500/30">
             S
           </div>
         </div>
 
-        {/* HEADING */}
         <div className="mt-8 text-center">
           <h1 className="text-4xl font-black tracking-tight text-white">
             Create Account
@@ -105,10 +90,7 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {/* FORM */}
         <form onSubmit={handleRegister} className="mt-10 space-y-5">
-
-          {/* NAME */}
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-300">
               Full Name
@@ -128,7 +110,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* EMAIL */}
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-300">
               Email Address
@@ -148,7 +129,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* PASSWORD */}
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-300">
               Password
@@ -167,58 +147,47 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* PASSWORD RULES */}
             <div className="mt-3 space-y-2 text-xs">
-
               <PasswordRule
                 valid={passwordRules.length}
                 text="At least 6 characters"
               />
-
               <PasswordRule
                 valid={passwordRules.uppercase}
                 text="At least one uppercase letter"
               />
-
               <PasswordRule
                 valid={passwordRules.lowercase}
                 text="At least one lowercase letter"
               />
-
             </div>
           </div>
 
-          {/* BUTTON */}
           <button
             type="submit"
             disabled={!isPasswordValid}
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-6 py-4 text-sm font-black text-slate-950 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
           >
             Create Account
-
             <ArrowRight className="h-5 w-5" />
           </button>
         </form>
 
-        {/* DIVIDER */}
         <div className="my-6 flex items-center gap-4">
-          <div className="h-px flex-1 bg-emerald-900/40"></div>
+          <div className="h-px flex-1 bg-emerald-900/40" />
 
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
             Or
           </span>
 
-          <div className="h-px flex-1 bg-emerald-900/40"></div>
+          <div className="h-px flex-1 bg-emerald-900/40" />
         </div>
 
-        {/* GOOGLE BUTTON */}
         <GoogleButton text="Sign up with Google" />
 
-        {/* FOOTER */}
         <div className="mt-8 text-center">
           <p className="text-sm text-slate-400">
             Already have an account?{" "}
-
             <Link
               href="/login"
               className="font-bold text-emerald-300 hover:text-emerald-200"
@@ -231,10 +200,6 @@ export default function RegisterPage() {
     </main>
   );
 }
-
-/*
-PASSWORD RULE COMPONENT
-*/
 
 function PasswordRule({ valid, text }) {
   return (

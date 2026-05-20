@@ -30,8 +30,6 @@ export default function LoginPage() {
         return;
       }
 
-      localStorage.setItem("studynook-user", JSON.stringify({ email }));
-
       toast.success("Login successful.");
 
       setTimeout(() => {
@@ -134,9 +132,11 @@ export default function LoginPage() {
 
         <div className="my-6 flex items-center gap-4">
           <div className="h-px flex-1 bg-emerald-900/40" />
+
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
             Or
           </span>
+
           <div className="h-px flex-1 bg-emerald-900/40" />
         </div>
 

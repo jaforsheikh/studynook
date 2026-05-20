@@ -3,15 +3,24 @@
 import { Bell, LogOut, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 import MobileDashboardMenu from "./MobileDashboardMenu";
 
 export default function DashboardTopbar() {
   const router = useRouter();
+  const { data: session } = authClient.useSession();
 
-  const handleLogout = () => {
-    localStorage.removeItem("studynook-user");
-    toast.success("Logged out successfully");
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      await authClient.signOut();
+
+      toast.success("Logged out successfully.");
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.log(error);
+      toast.error("Logout failed.");
+    }
   };
 
   return (
@@ -53,7 +62,7 @@ export default function DashboardTopbar() {
           <MobileDashboardMenu />
 
           <div className="hidden h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-sm font-black text-white sm:flex">
-            U
+            {session?.user?.name?.charAt(0)?.toUpperCase() || "U"}
           </div>
         </div>
       </div>

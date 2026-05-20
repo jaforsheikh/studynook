@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Building2,
   LayoutDashboard,
@@ -22,32 +22,22 @@ const navLinks = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [localUser, setLocalUser] = useState(null);
-
   const { data: session } = authClient.useSession();
 
-  useEffect(() => {
-    const user = localStorage.getItem("studynook-user");
-    if (user) {
-      setLocalUser(JSON.parse(user));
-    }
-  }, []);
-
-  const isLoggedIn = Boolean(session?.user || localUser);
+  const isLoggedIn = Boolean(session?.user);
 
   const handleLogout = async () => {
     try {
       await authClient.signOut();
+
+      setOpen(false);
+      toast.success("Logged out successfully.");
+
+      window.location.href = "/login";
     } catch (error) {
       console.log(error);
+      toast.error("Logout failed.");
     }
-
-    localStorage.removeItem("studynook-user");
-    setLocalUser(null);
-    setOpen(false);
-
-    toast.success("Logged out successfully.");
-    window.location.href = "/login";
   };
 
   return (

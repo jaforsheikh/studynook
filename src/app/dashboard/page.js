@@ -1,151 +1,136 @@
-import DashboardStatCard from "@/components/dashboard/DashboardStatCard";
+"use client";
 
+import { useEffect, useState } from "react";
 import {
-  CalendarCheck,
-  CreditCard,
+  CalendarDays,
   Building2,
-  Star,
+  Wallet,
+  BadgeDollarSign,
 } from "lucide-react";
 
-const stats = [
-  {
-    title: "Total Bookings",
-    value: "24",
-    icon: CalendarCheck,
-    color: "bg-emerald-500/10 text-emerald-400",
-  },
-  {
-    title: "Rooms Listed",
-    value: "6",
-    icon: Building2,
-    color: "bg-cyan-500/10 text-cyan-400",
-  },
-  {
-    title: "Total Payments",
-    value: "৳12,450",
-    icon: CreditCard,
-    color: "bg-amber-500/10 text-amber-400",
-  },
-  {
-    title: "Average Rating",
-    value: "4.9",
-    icon: Star,
-    color: "bg-pink-500/10 text-pink-400",
-  },
-];
-
 export default function DashboardPage() {
+  const [stats, setStats] = useState({
+    totalListings: 0,
+    totalBookings: 0,
+    totalSpent: 0,
+    totalRevenue: 0,
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadDashboardStats = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem("studynook-user"));
+
+        if (!user?.email) {
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch(
+          `http://localhost:5000/api/dashboard/stats/${user.email}`
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+          setStats(data.stats);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboardStats();
+  }, []);
+
+  const cards = [
+    {
+      title: "Total Bookings",
+      value: stats.totalBookings,
+      icon: CalendarDays,
+      color: "text-emerald-400",
+      bg: "bg-emerald-500/10",
+    },
+    {
+      title: "Rooms Listed",
+      value: stats.totalListings,
+      icon: Building2,
+      color: "text-cyan-400",
+      bg: "bg-cyan-500/10",
+    },
+    {
+      title: "Total Spent",
+      value: `৳${stats.totalSpent}`,
+      icon: Wallet,
+      color: "text-amber-400",
+      bg: "bg-amber-500/10",
+    },
+    {
+      title: "Room Revenue",
+      value: `৳${stats.totalRevenue}`,
+      icon: BadgeDollarSign,
+      color: "text-pink-400",
+      bg: "bg-pink-500/10",
+    },
+  ];
+
   return (
-    <div>
-      <div>
-        <span className="rounded-full border border-emerald-800/40 bg-emerald-900/20 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">
+    <main className="min-h-screen bg-[#03110f] text-white">
+      <section className="border-b border-emerald-900/20 px-6 py-10">
+        <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-xs font-black uppercase tracking-[0.3em] text-emerald-300">
           Dashboard Overview
         </span>
 
-        <h1 className="mt-6 text-4xl font-black tracking-tight text-white">
-          Welcome back 👋
-        </h1>
-
-        <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-400">
-          Monitor your study room bookings, room listings, revenue, and activity
-          from one centralized dashboard.
-        </p>
-      </div>
-
-      <div className="mt-14 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((item) => (
-          <DashboardStatCard
-            key={item.title}
-            title={item.title}
-            value={item.value}
-            icon={item.icon}
-            color={item.color}
-          />
-        ))}
-      </div>
-
-      <div className="mt-14 rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-6 backdrop-blur-xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-black text-white">Recent Bookings</h2>
-            <p className="mt-2 text-sm text-slate-400">
-              Latest room booking activities
-            </p>
+        <div className="mt-6 flex items-center gap-4">
+          <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-amber-400 text-3xl">
+            👋
           </div>
 
-          <button className="rounded-2xl border border-emerald-800/40 bg-emerald-900/20 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-600">
-            View All
-          </button>
+          <div>
+            <h1 className="text-4xl font-black tracking-tight">
+              Welcome Back
+            </h1>
+
+            <p className="mt-2 max-w-2xl text-lg text-slate-400">
+              Monitor your bookings, room listings, revenue, and activity from
+              one centralized dashboard.
+            </p>
+          </div>
         </div>
+      </section>
 
-        <div className="mt-8 overflow-x-auto">
-          <table className="w-full min-w-[700px] border-separate border-spacing-y-3">
-            <thead>
-              <tr>
-                {["Room", "Date", "Duration", "Price", "Status"].map((head) => (
-                  <th
-                    key={head}
-                    className="text-left text-xs font-bold uppercase tracking-wider text-slate-500"
-                  >
-                    {head}
-                  </th>
-                ))}
-              </tr>
-            </thead>
+      <section className="grid gap-6 px-6 py-10 md:grid-cols-2 xl:grid-cols-4">
+        {cards.map((card) => {
+          const Icon = card.icon;
 
-            <tbody>
-              <BookingRow
-                room="Quiet Pod 3A"
-                date="18 May 2026"
-                duration="2 Hours"
-                price="৳240"
-                status="Confirmed"
-                statusClass="bg-emerald-500/10 text-emerald-300"
-              />
+          return (
+            <div
+              key={card.title}
+              className="rounded-[32px] border border-emerald-900/20 bg-gradient-to-br from-[#071815] to-[#04110f] p-7"
+            >
+              <div
+                className={`flex h-16 w-16 items-center justify-center rounded-2xl ${card.bg}`}
+              >
+                <Icon className={`h-8 w-8 ${card.color}`} />
+              </div>
 
-              <BookingRow
-                room="Skyline Focus Suite"
-                date="20 May 2026"
-                duration="3 Hours"
-                price="৳1260"
-                status="Upcoming"
-                statusClass="bg-cyan-500/10 text-cyan-300"
-              />
+              <div className="mt-8">
+                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">
+                  {card.title}
+                </h3>
 
-              <BookingRow
-                room="Group Studio West"
-                date="10 May 2026"
-                duration="1 Hour"
-                price="৳250"
-                status="Completed"
-                statusClass="bg-slate-700 text-slate-300"
-              />
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BookingRow({ room, date, duration, price, status, statusClass }) {
-  return (
-    <tr className="rounded-2xl bg-[#06110e]">
-      <td className="rounded-l-2xl px-4 py-5 text-sm font-semibold text-white">
-        {room}
-      </td>
-
-      <td className="px-4 py-5 text-sm text-slate-400">{date}</td>
-
-      <td className="px-4 py-5 text-sm text-slate-400">{duration}</td>
-
-      <td className="px-4 py-5 text-sm font-bold text-amber-400">{price}</td>
-
-      <td className="rounded-r-2xl px-4 py-5">
-        <span className={`rounded-full px-3 py-1 text-xs font-bold ${statusClass}`}>
-          {status}
-        </span>
-      </td>
-    </tr>
+                <div className="mt-4 text-5xl font-black tracking-tight">
+                  {loading ? "..." : card.value}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </section>
+    </main>
   );
 }

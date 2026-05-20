@@ -16,11 +16,11 @@ export default function RequireAuth({ children }) {
 
   if (isPending) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#06110e]">
+      <div className="flex min-h-screen items-center justify-center bg-[#06110e] text-white">
         <div className="text-center">
           <div className="mx-auto h-14 w-14 animate-spin rounded-full border-4 border-emerald-900 border-t-emerald-400" />
 
-          <h2 className="mt-6 text-2xl font-black text-white">
+          <h2 className="mt-6 text-2xl font-black">
             Checking Authentication...
           </h2>
 
