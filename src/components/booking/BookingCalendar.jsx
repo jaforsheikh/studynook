@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { CalendarDays, Clock, CreditCard } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Clock3 } from "lucide-react";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 
 const timeSlots = [
   "08:00 AM",
@@ -18,64 +20,90 @@ const timeSlots = [
   "06:00 PM",
 ];
 
+const months = [
+  { label: "January", value: "01" },
+  { label: "February", value: "02" },
+  { label: "March", value: "03" },
+  { label: "April", value: "04" },
+  { label: "May", value: "05" },
+  { label: "June", value: "06" },
+  { label: "July", value: "07" },
+  { label: "August", value: "08" },
+  { label: "September", value: "09" },
+  { label: "October", value: "10" },
+  { label: "November", value: "11" },
+  { label: "December", value: "12" },
+];
+
 export default function BookingCalendar({ room }) {
-  const [date, setDate] = useState("");
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+
+  const [day, setDay] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("2026");
   const [selectedSlots, setSelectedSlots] = useState([]);
 
+  const selectedDate = day && month && year ? `${year}-${month}-${day}` : "";
+
+  const totalPrice = useMemo(() => {
+    return selectedSlots.length * Number(room.price || 0);
+  }, [selectedSlots, room.price]);
+
   const toggleSlot = (slot) => {
-    if (selectedSlots.includes(slot)) {
-      setSelectedSlots(
-        selectedSlots.filter((item) => item !== slot)
-      );
-    } else {
-      setSelectedSlots([...selectedSlots, slot]);
-    }
+    setSelectedSlots((prev) =>
+      prev.includes(slot)
+        ? prev.filter((item) => item !== slot)
+        : [...prev, slot]
+    );
   };
 
-  const totalPrice =
-    selectedSlots.length * Number(room.price);
-
   const handleBooking = async () => {
+    if (!session?.user) {
+      toast.error("Please login first to book this room.");
+      router.push("/login");
+      return;
+    }
+
+    if (!selectedDate) {
+      toast.error("Please select booking date.");
+      return;
+    }
+
+    if (selectedSlots.length === 0) {
+      toast.error("Please select at least one time slot.");
+      return;
+    }
+
     try {
-      if (!date) {
-        toast.error("Please select a booking date.");
-        return;
-      }
-
-      if (selectedSlots.length === 0) {
-        toast.error("Please select at least one time slot.");
-        return;
-      }
-
       const bookingData = {
-        roomId: room.id || room._id,
+        roomId: room.id || room._id || room.slug,
         roomName: room.title || room.name,
-        date,
+        bookingDate: selectedDate,
         slots: selectedSlots,
         totalPrice,
+        userEmail: session.user.email,
+        userName: session.user.name,
       };
 
-      const response = await fetch(
-        "http://localhost:5000/api/bookings",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(bookingData),
-        }
-      );
+      const res = await fetch("http://localhost:5000/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(bookingData),
+      });
 
-      const data = await response.json();
+      const data = await res.json();
 
       if (data.success) {
-        toast.success("Booking created successfully!");
-
-        console.log(data);
-
+        toast.success("Booking confirmed successfully!");
+        setDay("");
+        setMonth("");
         setSelectedSlots([]);
       } else {
-        toast.error("Booking failed.");
+        toast.error(data.message || "Booking failed.");
       }
     } catch (error) {
       console.log(error);
@@ -85,41 +113,64 @@ export default function BookingCalendar({ room }) {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
-      
-      <div className="rounded-[32px] border border-emerald-900/30 bg-gradient-to-b from-[#071411] to-[#06110e] p-8">
-        
-        <h2 className="text-4xl font-black text-white">
-          Select Time Slots
-        </h2>
+      <div className="rounded-[32px] border border-emerald-900/30 bg-[#071411] p-8">
+        <h2 className="text-4xl font-black text-white">Select Time Slots</h2>
 
-        <p className="mt-4 text-lg leading-8 text-slate-400">
-          Choose a date and one or more hourly slots for
-          your booking.
+        <p className="mt-4 text-lg text-slate-400">
+          Choose a date and one or more hourly slots for your booking.
         </p>
 
         <div className="mt-10">
-          
-          <label className="mb-4 block text-xl font-bold text-white">
+          <label className="mb-4 block text-xl font-black text-white">
             Booking Date
           </label>
 
-          <div className="relative">
-            
-            <CalendarDays className="pointer-events-none absolute left-5 top-1/2 h-6 w-6 -translate-y-1/2 text-emerald-400" />
+          <div className="grid gap-4 sm:grid-cols-3">
+            <select
+              value={day}
+              onChange={(e) => setDay(e.target.value)}
+              className="h-16 rounded-2xl border border-emerald-900/40 bg-[#02110d] px-5 text-white outline-none"
+            >
+              <option value="">Day</option>
+              {Array.from({ length: 31 }, (_, i) => {
+                const value = String(i + 1).padStart(2, "0");
 
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="h-20 w-full rounded-[24px] border border-emerald-900/40 bg-[#02110d] pl-16 pr-6 text-lg font-semibold text-white outline-none transition focus:border-emerald-500"
-            />
+                return (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                );
+              })}
+            </select>
+
+            <select
+              value={month}
+              onChange={(e) => setMonth(e.target.value)}
+              className="h-16 rounded-2xl border border-emerald-900/40 bg-[#02110d] px-5 text-white outline-none"
+            >
+              <option value="">Month</option>
+
+              {months.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              className="h-16 rounded-2xl border border-emerald-900/40 bg-[#02110d] px-5 text-white outline-none"
+            >
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+            </select>
           </div>
         </div>
 
         <div className="mt-12">
-          
           <div className="mb-6 flex items-center gap-3">
-            <Clock className="h-7 w-7 text-emerald-400" />
+            <Clock3 className="h-7 w-7 text-emerald-400" />
 
             <h3 className="text-2xl font-black text-white">
               Available Time Slots
@@ -128,12 +179,12 @@ export default function BookingCalendar({ room }) {
 
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
             {timeSlots.map((slot) => {
-              const active =
-                selectedSlots.includes(slot);
+              const active = selectedSlots.includes(slot);
 
               return (
                 <button
                   key={slot}
+                  type="button"
                   onClick={() => toggleSlot(slot)}
                   className={`h-16 rounded-[20px] border text-lg font-black transition ${
                     active
@@ -149,83 +200,45 @@ export default function BookingCalendar({ room }) {
         </div>
       </div>
 
-      <div className="rounded-[32px] border border-emerald-900/30 bg-gradient-to-b from-[#071411] to-[#06110e] p-8">
-        
-        <h2 className="text-4xl font-black text-white">
-          Booking Summary
-        </h2>
+      <aside className="rounded-[32px] border border-emerald-900/30 bg-[#071411] p-8">
+        <h2 className="text-4xl font-black text-white">Booking Summary</h2>
 
         <div className="mt-10 space-y-6">
-          
-          <div className="flex items-center justify-between border-b border-emerald-900/20 pb-5">
-            <span className="text-xl text-slate-400">
-              Room
-            </span>
-
-            <span className="text-xl font-black text-white">
-              {room.title || room.name}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between border-b border-emerald-900/20 pb-5">
-            <span className="text-xl text-slate-400">
-              Date
-            </span>
-
-            <span className="text-xl font-black text-white">
-              {date || "Not selected"}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between border-b border-emerald-900/20 pb-5">
-            <span className="text-xl text-slate-400">
-              Selected Slots
-            </span>
-
-            <span className="text-xl font-black text-white">
-              {selectedSlots.length}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between border-b border-emerald-900/20 pb-5">
-            <span className="text-xl text-slate-400">
-              Hourly Price
-            </span>
-
-            <span className="text-xl font-black text-white">
-              ৳{room.price}
-            </span>
-          </div>
+          <SummaryRow label="Room" value={room.title || room.name} />
+          <SummaryRow label="Date" value={selectedDate || "Not selected"} />
+          <SummaryRow label="Selected Slots" value={selectedSlots.length} />
+          <SummaryRow label="Hourly Price" value={`৳${room.price}`} />
         </div>
 
         <div className="mt-10 rounded-[28px] bg-[#02110d] p-8">
-          
-          <div className="flex items-center justify-between">
-            
-            <span className="text-2xl text-slate-400">
-              Total
-            </span>
+          <p className="text-xl text-slate-400">Total</p>
 
-            <span className="text-6xl font-black text-amber-400">
-              ৳{totalPrice}
-            </span>
-          </div>
+          <h3 className="mt-3 text-6xl font-black text-amber-400">
+            ৳{totalPrice}
+          </h3>
         </div>
 
         <button
+          type="button"
           onClick={handleBooking}
-          className="mt-10 flex h-20 w-full items-center justify-center gap-3 rounded-[24px] bg-amber-400 text-2xl font-black text-black transition hover:bg-amber-300"
+          className="mt-10 flex h-20 w-full items-center justify-center rounded-[24px] bg-amber-400 text-2xl font-black text-black transition hover:bg-amber-300"
         >
-          <CreditCard className="h-7 w-7" />
-
           Confirm Booking
         </button>
 
-        <p className="mt-6 text-center text-lg leading-8 text-slate-500">
-          Backend will verify room availability before
-          confirming.
+        <p className="mt-6 text-center text-lg text-slate-500">
+          Login is required before booking confirmation.
         </p>
-      </div>
+      </aside>
+    </div>
+  );
+}
+
+function SummaryRow({ label, value }) {
+  return (
+    <div className="flex items-center justify-between border-b border-emerald-900/30 pb-5">
+      <span className="text-lg text-slate-400">{label}</span>
+      <span className="text-right text-lg font-black text-white">{value}</span>
     </div>
   );
 }

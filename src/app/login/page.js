@@ -20,20 +20,24 @@ export default function LoginPage() {
     e.preventDefault();
 
     try {
-      await authClient.signIn.email({
+      const res = await authClient.signIn.email({
         email,
         password,
       });
 
-      localStorage.setItem(
-        "studynook-user",
-        JSON.stringify({
-          email,
-        })
-      );
+      if (res?.error) {
+        toast.error(res.error.message || "Invalid email or password.");
+        return;
+      }
+
+      localStorage.setItem("studynook-user", JSON.stringify({ email }));
 
       toast.success("Login successful.");
-      router.push("/dashboard");
+
+      setTimeout(() => {
+        router.push("/dashboard");
+        router.refresh();
+      }, 500);
     } catch (error) {
       console.log(error);
       toast.error("Invalid email or password.");
