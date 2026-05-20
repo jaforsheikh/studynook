@@ -1,20 +1,20 @@
-import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
-import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
+import "./globals.css";
+import { Toaster } from "sonner";
+import LayoutShell from "@/components/shared/LayoutShell";
 
-export default function DashboardLayout({ children }) {
+export const metadata = {
+  title: "StudyNook",
+  description: "Premium Study Room Booking Platform",
+};
+
+export default function RootLayout({ children }) {
   return (
-    <div className="flex min-h-screen bg-[#06110e]">
-      {/* SIDEBAR */}
-      <DashboardSidebar />
+    <html lang="en">
+      <body className="bg-[#06110e] text-white">
+        <LayoutShell>{children}</LayoutShell>
 
-      {/* MAIN CONTENT */}
-      <div className="flex-1">
-        <DashboardTopbar />
-
-        <main className="p-4 sm:p-6 lg:p-8">
-          {children}
-        </main>
-      </div>
-    </div>
+        <Toaster position="top-right" richColors closeButton />
+      </body>
+    </html>
   );
 }

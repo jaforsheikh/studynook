@@ -1,3 +1,5 @@
+import DashboardStatCard from "@/components/dashboard/DashboardStatCard";
+
 import {
   CalendarCheck,
   CreditCard,
@@ -35,7 +37,6 @@ const stats = [
 export default function DashboardPage() {
   return (
     <div>
-      {/* PAGE HEADER */}
       <div>
         <span className="rounded-full border border-emerald-800/40 bg-emerald-900/20 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">
           Dashboard Overview
@@ -46,47 +47,27 @@ export default function DashboardPage() {
         </h1>
 
         <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-400">
-          Monitor your study room bookings, room listings,
-          revenue, and activity from one centralized dashboard.
+          Monitor your study room bookings, room listings, revenue, and activity
+          from one centralized dashboard.
         </p>
       </div>
 
-      {/* STATS */}
       <div className="mt-14 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((item) => {
-          const Icon = item.icon;
-
-          return (
-            <div
-              key={item.title}
-              className="rounded-[28px] border border-emerald-900/30 bg-white/[0.03] p-6 backdrop-blur-xl"
-            >
-              <div
-                className={`flex h-14 w-14 items-center justify-center rounded-2xl ${item.color}`}
-              >
-                <Icon className="h-7 w-7" />
-              </div>
-
-              <h3 className="mt-6 text-4xl font-black text-white">
-                {item.value}
-              </h3>
-
-              <p className="mt-2 text-sm font-medium text-slate-400">
-                {item.title}
-              </p>
-            </div>
-          );
-        })}
+        {stats.map((item) => (
+          <DashboardStatCard
+            key={item.title}
+            title={item.title}
+            value={item.value}
+            icon={item.icon}
+            color={item.color}
+          />
+        ))}
       </div>
 
-      {/* RECENT BOOKINGS */}
       <div className="mt-14 rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-6 backdrop-blur-xl">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-black text-white">
-              Recent Bookings
-            </h2>
-
+            <h2 className="text-2xl font-black text-white">Recent Bookings</h2>
             <p className="mt-2 text-sm text-slate-400">
               Latest room booking activities
             </p>
@@ -97,109 +78,74 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* TABLE */}
         <div className="mt-8 overflow-x-auto">
           <table className="w-full min-w-[700px] border-separate border-spacing-y-3">
             <thead>
               <tr>
-                <th className="text-left text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Room
-                </th>
-
-                <th className="text-left text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Date
-                </th>
-
-                <th className="text-left text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Duration
-                </th>
-
-                <th className="text-left text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Price
-                </th>
-
-                <th className="text-left text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Status
-                </th>
+                {["Room", "Date", "Duration", "Price", "Status"].map((head) => (
+                  <th
+                    key={head}
+                    className="text-left text-xs font-bold uppercase tracking-wider text-slate-500"
+                  >
+                    {head}
+                  </th>
+                ))}
               </tr>
             </thead>
 
             <tbody>
-              <tr className="rounded-2xl bg-[#06110e]">
-                <td className="rounded-l-2xl px-4 py-5 text-sm font-semibold text-white">
-                  Quiet Pod 3A
-                </td>
+              <BookingRow
+                room="Quiet Pod 3A"
+                date="18 May 2026"
+                duration="2 Hours"
+                price="৳240"
+                status="Confirmed"
+                statusClass="bg-emerald-500/10 text-emerald-300"
+              />
 
-                <td className="px-4 py-5 text-sm text-slate-400">
-                  18 May 2026
-                </td>
+              <BookingRow
+                room="Skyline Focus Suite"
+                date="20 May 2026"
+                duration="3 Hours"
+                price="৳1260"
+                status="Upcoming"
+                statusClass="bg-cyan-500/10 text-cyan-300"
+              />
 
-                <td className="px-4 py-5 text-sm text-slate-400">
-                  2 Hours
-                </td>
-
-                <td className="px-4 py-5 text-sm font-bold text-amber-400">
-                  ৳240
-                </td>
-
-                <td className="rounded-r-2xl px-4 py-5">
-                  <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-300">
-                    Confirmed
-                  </span>
-                </td>
-              </tr>
-
-              <tr className="rounded-2xl bg-[#06110e]">
-                <td className="rounded-l-2xl px-4 py-5 text-sm font-semibold text-white">
-                  Skyline Focus Suite
-                </td>
-
-                <td className="px-4 py-5 text-sm text-slate-400">
-                  20 May 2026
-                </td>
-
-                <td className="px-4 py-5 text-sm text-slate-400">
-                  3 Hours
-                </td>
-
-                <td className="px-4 py-5 text-sm font-bold text-amber-400">
-                  ৳1260
-                </td>
-
-                <td className="rounded-r-2xl px-4 py-5">
-                  <span className="rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-bold text-cyan-300">
-                    Upcoming
-                  </span>
-                </td>
-              </tr>
-
-              <tr className="rounded-2xl bg-[#06110e]">
-                <td className="rounded-l-2xl px-4 py-5 text-sm font-semibold text-white">
-                  Group Studio West
-                </td>
-
-                <td className="px-4 py-5 text-sm text-slate-400">
-                  10 May 2026
-                </td>
-
-                <td className="px-4 py-5 text-sm text-slate-400">
-                  1 Hour
-                </td>
-
-                <td className="px-4 py-5 text-sm font-bold text-amber-400">
-                  ৳250
-                </td>
-
-                <td className="rounded-r-2xl px-4 py-5">
-                  <span className="rounded-full bg-slate-700 px-3 py-1 text-xs font-bold text-slate-300">
-                    Completed
-                  </span>
-                </td>
-              </tr>
+              <BookingRow
+                room="Group Studio West"
+                date="10 May 2026"
+                duration="1 Hour"
+                price="৳250"
+                status="Completed"
+                statusClass="bg-slate-700 text-slate-300"
+              />
             </tbody>
           </table>
         </div>
       </div>
     </div>
+  );
+}
+
+function BookingRow({ room, date, duration, price, status, statusClass }) {
+  return (
+    <tr className="rounded-2xl bg-[#06110e]">
+      <td className="rounded-l-2xl px-4 py-5 text-sm font-semibold text-white">
+        {room}
+      </td>
+
+      <td className="px-4 py-5 text-sm text-slate-400">{date}</td>
+
+      <td className="px-4 py-5 text-sm text-slate-400">{duration}</td>
+
+      <td className="px-4 py-5 text-sm font-bold text-amber-400">{price}</td>
+
+      <td className="rounded-r-2xl px-4 py-5">
+        <span className={`rounded-full px-3 py-1 text-xs font-bold ${statusClass}`}>
+          {status}
+        </span>
+      </td>
+    </tr>
   );
 }
