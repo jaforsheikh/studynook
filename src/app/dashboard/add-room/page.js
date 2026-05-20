@@ -1,22 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-
-import { getRoomById, updateRoom } from "@/services/roomService";
-
-import {
-  ArrowLeft,
-  Building2,
-  ImageIcon,
-  Layers,
-  MapPin,
-  Save,
-  Users,
-  Wallet,
-} from "lucide-react";
-
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import { createRoom } from "@/services/roomService";
+import { Building2, ImageIcon, Layers, MapPin, Users, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 const amenitiesList = [
@@ -28,13 +16,9 @@ const amenitiesList = [
   "Air Conditioning",
 ];
 
-export default function EditRoomPage() {
+export default function AddRoomPage() {
   const router = useRouter();
-  const params = useParams();
-
-  const roomId = params.slug;
-
-  const [loading, setLoading] = useState(true);
+  const { data: session } = authClient.useSession();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -45,41 +29,9 @@ export default function EditRoomPage() {
     price: "",
     description: "",
     amenities: [],
+    availableToday: true,
+    rating: 4.8,
   });
-
-  useEffect(() => {
-    const fetchRoom = async () => {
-      try {
-        const data = await getRoomById(roomId);
-
-        if (data.success) {
-          const room = data.room;
-
-          setFormData({
-            name: room.name || "",
-            image: room.image || "",
-            location: room.location || "",
-            floor: room.floor || "",
-            capacity: room.capacity || "",
-            price: room.price || "",
-            description: room.description || "",
-            amenities: room.amenities || [],
-          });
-        } else {
-          toast.error(data.message || "Room not found.");
-        }
-      } catch (error) {
-        console.log(error);
-        toast.error("Failed to load room.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (roomId) {
-      fetchRoom();
-    }
-  }, [roomId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -102,69 +54,57 @@ export default function EditRoomPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!session?.user) {
+      toast.error("Please login first.");
+      router.push("/login");
+      return;
+    }
+
     if (!formData.name || !formData.image || !formData.location || !formData.price) {
       toast.error("Please fill all required fields.");
       return;
     }
 
-    try {
-      const payload = {
-        ...formData,
-        capacity: Number(formData.capacity),
-        price: Number(formData.price),
-      };
+    const roomData = {
+      ...formData,
+      capacity: Number(formData.capacity),
+      price: Number(formData.price),
+      owner: {
+        name: session.user.name,
+        email: session.user.email,
+      },
+    };
 
-      const data = await updateRoom(roomId, payload);
+    const data = await createRoom(roomData);
 
-      if (data.success) {
-        toast.success("Room updated successfully.");
-        router.push("/dashboard/my-listings");
-      } else {
-        toast.error(data.message || "Failed to update room.");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong.");
+    if (data.success) {
+      toast.success("Room added successfully.");
+      router.push("/dashboard/my-listings");
+    } else {
+      toast.error(data.message || "Failed to add room.");
     }
   };
 
-  if (loading) {
-    return (
-      <div className="rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-10">
-        <p className="text-slate-400">Loading room information...</p>
-      </div>
-    );
-  }
-
   return (
     <div>
-      <Link
-        href="/dashboard/my-listings"
-        className="inline-flex items-center gap-2 text-sm font-bold text-slate-300 hover:text-emerald-300"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to listings
-      </Link>
+      <span className="rounded-full border border-emerald-800/40 bg-emerald-900/20 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">
+        Add Study Room
+      </span>
 
-      <div className="mt-8">
-        <span className="rounded-full border border-emerald-800/40 bg-emerald-900/20 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">
-          Edit Room
-        </span>
+      <h1 className="mt-6 text-4xl font-black tracking-tight text-white">
+        Create New Room Listing
+      </h1>
 
-        <h1 className="mt-6 text-4xl font-black tracking-tight text-white">
-          Update Room Listing
-        </h1>
-
-        <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-400">
-          Update your room information, pricing, amenities, and image details.
-        </p>
-      </div>
+      <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-400">
+        Add your study room details, amenities, pricing, and availability to
+        start receiving bookings.
+      </p>
 
       <form
         onSubmit={handleSubmit}
         className="mt-10 rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-8"
       >
-        <h2 className="text-2xl font-black text-white">Room Information</h2>
+        <h2 className="text-2xl font-black text-white">Basic Information</h2>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           <InputBox
@@ -266,10 +206,9 @@ export default function EditRoomPage() {
 
         <button
           type="submit"
-          className="mt-10 inline-flex items-center gap-3 rounded-2xl bg-amber-400 px-8 py-4 text-sm font-black text-slate-950 transition hover:bg-amber-300"
+          className="mt-10 rounded-2xl bg-amber-400 px-8 py-4 text-sm font-black text-slate-950 transition hover:bg-amber-300"
         >
-          <Save className="h-5 w-5" />
-          Update Room
+          Save Room Listing
         </button>
       </form>
     </div>

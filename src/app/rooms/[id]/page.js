@@ -1,6 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { rooms } from "@/data/rooms";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+
+import { getRoomById } from "@/services/roomService";
+import EmptyState from "@/components/shared/EmptyState";
+
 import {
   ArrowLeft,
   CalendarCheck,
@@ -14,25 +21,58 @@ import {
   Wifi,
 } from "lucide-react";
 
-export default async function RoomDetailsPage({ params }) {
-  const { id } = await params;
+import { toast } from "sonner";
 
-  const room = rooms.find(
-    (item) =>
-      item.id?.toString() === id ||
-      item._id?.toString() === id ||
-      item.slug === id
-  );
+export default function RoomDetailsPage() {
+  const params = useParams();
+  const id = params.id;
+
+  const [room, setRoom] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRoom = async () => {
+      try {
+        const data = await getRoomById(id);
+
+        if (data.success) {
+          setRoom(data.room);
+        } else {
+          toast.error(data.message || "Room not found.");
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load room details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchRoom();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
+        <div className="mx-auto max-w-7xl rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-10">
+          <p className="text-slate-400">Loading room details...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (!room) {
     return (
       <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
-        <div className="mx-auto max-w-6xl">
-          <h1 className="text-4xl font-black">Room not found</h1>
-
-          <Link href="/rooms" className="mt-6 inline-block text-emerald-300">
-            Back to rooms
-          </Link>
+        <div className="mx-auto max-w-7xl">
+          <EmptyState
+            title="Room not found"
+            description="This room does not exist or may have been removed."
+            actionText="Back to Rooms"
+            actionHref="/rooms"
+          />
         </div>
       </main>
     );
@@ -54,35 +94,35 @@ export default async function RoomDetailsPage({ params }) {
             <div className="relative h-[480px] overflow-hidden rounded-[34px] border border-emerald-900/30">
               <Image
                 src={room.image}
-                alt={room.title || room.name}
+                alt={room.name}
                 fill
                 className="object-cover"
               />
 
               <div className="absolute left-5 top-5 rounded-full bg-emerald-500/90 px-5 py-2 text-sm font-black text-white">
-                {room.availableToday ? "Available Today" : "Booked"}
+                {room.availableToday ? "Available Today" : "Available"}
               </div>
             </div>
 
             <div className="mt-10 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
               <div>
                 <h1 className="text-5xl font-black tracking-tight text-white">
-                  {room.title || room.name}
+                  {room.name}
                 </h1>
 
                 <p className="mt-3 text-sm font-semibold text-slate-500">
-                  Listed May 17, 2026
+                  Listed by {room.owner?.name || "StudyNook Host"}
                 </p>
               </div>
 
               <span className="rounded-full bg-emerald-500/10 px-5 py-2 text-sm font-bold text-emerald-300">
-                {room.bookingCount || 8} bookings
+                {room.bookingCount || 0} bookings
               </span>
             </div>
 
             <div className="mt-6 flex flex-wrap gap-5 text-slate-400">
               <InfoLine icon={MapPin} text={room.location} />
-              <InfoLine icon={Layers} text={room.floor} />
+              <InfoLine icon={Layers} text={room.floor || "N/A"} />
               <InfoLine icon={Users} text={`Up to ${room.capacity} people`} />
               <InfoLine icon={Wifi} text="High-speed Wi-Fi" />
             </div>
@@ -170,11 +210,11 @@ export default async function RoomDetailsPage({ params }) {
               </div>
 
               <div className="mt-8 space-y-4 text-slate-300">
-                <InfoLine icon={Layers} text={room.floor} />
+                <InfoLine icon={Layers} text={room.floor || "N/A"} />
                 <InfoLine icon={Users} text={`Up to ${room.capacity} people`} />
                 <InfoLine
                   icon={DollarSign}
-                  text={`${room.bookingCount || 8} total bookings`}
+                  text={`${room.bookingCount || 0} total bookings`}
                 />
               </div>
 
@@ -197,23 +237,14 @@ export default async function RoomDetailsPage({ params }) {
                 Listed By
               </p>
 
-              <div className="mt-5 flex items-center gap-4">
-                <div className="h-14 w-14 overflow-hidden rounded-full bg-emerald-500/20">
-                  <Image
-                    src="/assets/avatar.jpg"
-                    alt="Owner"
-                    width={56}
-                    height={56}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
+              <div className="mt-5">
+                <h3 className="font-black text-white">
+                  {room.owner?.name || "StudyNook Host"}
+                </h3>
 
-                <div>
-                  <h3 className="font-black text-white">Maya Chen</h3>
-                  <p className="text-sm text-emerald-200">
-                    maya@studynook.demo
-                  </p>
-                </div>
+                <p className="mt-1 text-sm text-emerald-200">
+                  {room.owner?.email || "host@studynook.demo"}
+                </p>
               </div>
             </div>
 

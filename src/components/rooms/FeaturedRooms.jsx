@@ -1,47 +1,80 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+"use client";
 
-import RoomCard from "./RoomCard";
-import { rooms } from "@/data/rooms";
+import { useEffect, useState } from "react";
+import RoomCard from "@/components/rooms/RoomCard";
+import EmptyState from "@/components/shared/EmptyState";
+import { toast } from "sonner";
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export default function FeaturedRooms() {
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLatestRooms = async () => {
+      try {
+        const res = await fetch(`${API_URL}/rooms/latest`, {
+          credentials: "include",
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          setRooms(data.rooms);
+        } else {
+          toast.error(data.message || "Failed to load featured rooms.");
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load featured rooms.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLatestRooms();
+  }, []);
+
   return (
     <section className="bg-[#06110e] py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        {/* HEADER */}
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          
-          <div className="max-w-2xl">
-            <span className="rounded-full border border-emerald-800/40 bg-emerald-900/20 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">
-              Featured Rooms
-            </span>
+        <div className="max-w-3xl">
+          <span className="rounded-full border border-emerald-800/40 bg-emerald-900/20 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">
+            Featured Rooms
+          </span>
 
-            <h2 className="mt-6 text-4xl font-black tracking-tight text-white sm:text-5xl">
-              Discover Premium Study Spaces
-            </h2>
+          <h2 className="mt-6 text-5xl font-black tracking-tight text-white">
+            Popular Study Spaces
+          </h2>
 
-            <p className="mt-5 text-lg leading-8 text-slate-400">
-              Hand-picked modern study environments designed for deep focus,
-              collaboration, and productivity.
-            </p>
+          <p className="mt-5 text-lg leading-8 text-slate-400">
+            Explore recently listed study rooms from MongoDB with real-time
+            booking-ready data.
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="mt-14 rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-10">
+            <p className="text-slate-400">Loading featured rooms...</p>
           </div>
-
-          <Link
-            href="/rooms"
-            className="inline-flex items-center gap-2 rounded-2xl border border-emerald-800/40 bg-emerald-900/20 px-6 py-4 text-sm font-bold text-white transition hover:border-emerald-600 hover:bg-emerald-600"
-          >
-            View All Rooms
-            <ArrowRight className="h-5 w-5" />
-          </Link>
-        </div>
-
-        {/* GRID */}
-        <div className="mt-16 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {rooms.slice(0, 6).map((room) => (
-            <RoomCard key={room.id} room={room} />
-          ))}
-        </div>
+        ) : rooms.length === 0 ? (
+          <div className="mt-14">
+            <EmptyState
+              title="No featured rooms yet"
+              description="No study rooms have been added yet. Add your first room from the dashboard."
+              actionText="Add Room"
+              actionHref="/dashboard/add-room"
+            />
+          </div>
+        ) : (
+          <div className="mt-14 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+            {rooms.map((room) => (
+              <RoomCard key={room._id} room={room} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

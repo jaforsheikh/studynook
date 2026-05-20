@@ -1,27 +1,66 @@
+"use client";
+
 import Link from "next/link";
-import { rooms } from "@/data/rooms";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+
+import { getRoomById } from "@/services/roomService";
 import BookingCalendar from "@/components/booking/BookingCalendar";
+import EmptyState from "@/components/shared/EmptyState";
+
 import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
-export default async function BookRoomPage({ params }) {
-  const { id } = await params;
+export default function BookRoomPage() {
+  const params = useParams();
+  const id = params.id;
 
-  const room = rooms.find(
-    (item) =>
-      item.id?.toString() === id ||
-      item._id?.toString() === id ||
-      item.slug === id
-  );
+  const [room, setRoom] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRoom = async () => {
+      try {
+        const data = await getRoomById(id);
+
+        if (data.success) {
+          setRoom(data.room);
+        } else {
+          toast.error(data.message || "Room not found.");
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to load room.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchRoom();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
+        <div className="mx-auto max-w-5xl rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-10">
+          <p className="text-slate-400">Loading booking page...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (!room) {
     return (
       <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
         <div className="mx-auto max-w-5xl">
-          <h1 className="text-4xl font-black">Room not found</h1>
-
-          <Link href="/rooms" className="mt-6 inline-block text-emerald-300">
-            Back to rooms
-          </Link>
+          <EmptyState
+            title="Room not found"
+            description="This room does not exist or may have been removed."
+            actionText="Back to Rooms"
+            actionHref="/rooms"
+          />
         </div>
       </main>
     );
@@ -29,7 +68,7 @@ export default async function BookRoomPage({ params }) {
 
   return (
     <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-7xl">
         <Link
           href={`/rooms/${id}`}
           className="mb-10 inline-flex items-center gap-2 text-sm font-bold text-slate-300 hover:text-emerald-300"
@@ -44,7 +83,7 @@ export default async function BookRoomPage({ params }) {
           </span>
 
           <h1 className="mt-6 text-5xl font-black tracking-tight text-white">
-            Book {room.title || room.name}
+            Book {room.name}
           </h1>
 
           <p className="mt-4 text-lg leading-8 text-slate-400">
