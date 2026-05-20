@@ -1,15 +1,43 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 import GoogleButton from "@/components/auth/GoogleButton";
+import { authClient } from "@/lib/auth-client";
+
 import { ArrowRight, LockKeyhole, Mail } from "lucide-react";
 import { toast } from "sonner";
 
 export default function LoginPage() {
-  const handleLogin = (e) => {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    toast.info("Email login will connect after backend auth integration.");
+    try {
+      await authClient.signIn.email({
+        email,
+        password,
+      });
+
+      localStorage.setItem(
+        "studynook-user",
+        JSON.stringify({
+          email,
+        })
+      );
+
+      toast.success("Login successful.");
+      router.push("/dashboard");
+    } catch (error) {
+      console.log(error);
+      toast.error("Invalid email or password.");
+    }
   };
 
   return (
@@ -47,6 +75,8 @@ export default function LoginPage() {
               <input
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
               />
@@ -73,6 +103,8 @@ export default function LoginPage() {
               <input
                 type="password"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password"
                 className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
               />

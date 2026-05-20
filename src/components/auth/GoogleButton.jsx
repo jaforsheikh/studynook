@@ -1,16 +1,19 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 
 export default function GoogleButton({ text = "Continue with Google" }) {
-  const handleGoogleLogin = () => {
-    toast.info("Google login will connect after Better Auth setup.");
-
-    // Later Better Auth integration:
-    // authClient.signIn.social({
-    //   provider: "google",
-    //   callbackURL: "/dashboard",
-    // });
+  const handleGoogleLogin = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "http://localhost:3000/dashboard",
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Google login failed.");
+    }
   };
 
   return (

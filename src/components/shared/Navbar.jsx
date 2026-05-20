@@ -1,8 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, X, Search, UserRound, Building2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Building2,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Search,
+  UserRound,
+  X,
+} from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 const navLinks = [
   { label: "Study Rooms", href: "/rooms" },
@@ -12,11 +22,37 @@ const navLinks = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [localUser, setLocalUser] = useState(null);
+
+  const { data: session } = authClient.useSession();
+
+  useEffect(() => {
+    const user = localStorage.getItem("studynook-user");
+    if (user) {
+      setLocalUser(JSON.parse(user));
+    }
+  }, []);
+
+  const isLoggedIn = Boolean(session?.user || localUser);
+
+  const handleLogout = async () => {
+    try {
+      await authClient.signOut();
+    } catch (error) {
+      console.log(error);
+    }
+
+    localStorage.removeItem("studynook-user");
+    setLocalUser(null);
+    setOpen(false);
+
+    toast.success("Logged out successfully.");
+    window.location.href = "/login";
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-emerald-900/30 bg-[#06110e]/90 backdrop-blur-xl">
       <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        
         <Link href="/" className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-xl font-black text-white shadow-lg shadow-emerald-500/25">
             S
@@ -53,13 +89,33 @@ export default function Navbar() {
             Search
           </Link>
 
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 rounded-2xl bg-amber-400 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-amber-300"
-          >
-            <UserRound className="h-4 w-4" />
-            Login
-          </Link>
+          {isLoggedIn ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-2 rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-black text-white transition hover:bg-emerald-600"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                Dashboard
+              </Link>
+
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center gap-2 rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-3 text-sm font-bold text-red-300 transition hover:bg-red-500/20"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 rounded-2xl bg-amber-400 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-amber-300"
+            >
+              <UserRound className="h-4 w-4" />
+              Login
+            </Link>
+          )}
         </div>
 
         <button
@@ -93,23 +149,35 @@ export default function Navbar() {
               Search Rooms
             </Link>
 
-            <Link
-              href="/dashboard"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-300"
-            >
-              <Building2 className="h-4 w-4" />
-              Dashboard
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-300"
+                >
+                  <Building2 className="h-4 w-4" />
+                  Dashboard
+                </Link>
 
-            <Link
-              href="/login"
-              onClick={() => setOpen(false)}
-              className="mt-4 flex items-center justify-center gap-2 rounded-2xl bg-amber-400 px-5 py-4 text-sm font-black text-slate-950"
-            >
-              <UserRound className="h-4 w-4" />
-              Login
-            </Link>
+                <button
+                  onClick={handleLogout}
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm font-black text-red-300"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="mt-4 flex items-center justify-center gap-2 rounded-2xl bg-amber-400 px-5 py-4 text-sm font-black text-slate-950"
+              >
+                <UserRound className="h-4 w-4" />
+                Login
+              </Link>
+            )}
           </div>
         </div>
       )}

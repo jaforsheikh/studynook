@@ -1,31 +1,22 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function RequireAuth({ children }) {
   const router = useRouter();
-
-  const [loading, setLoading] = useState(true);
-
-  /*
-    TEMP AUTH CHECK
-    Later this will come from Better Auth / JWT
-  */
+  const { data: session, isPending } = authClient.useSession();
 
   useEffect(() => {
-    const fakeUser = localStorage.getItem("studynook-user");
-
-    if (!fakeUser) {
+    if (!isPending && !session?.user) {
       router.push("/login");
-    } else {
-      setLoading(false);
     }
-  }, [router]);
+  }, [isPending, session, router]);
 
-  if (loading) {
+  if (isPending) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-[#06110e]">
         <div className="text-center">
           <div className="mx-auto h-14 w-14 animate-spin rounded-full border-4 border-emerald-900 border-t-emerald-400" />
 
@@ -39,6 +30,10 @@ export default function RequireAuth({ children }) {
         </div>
       </div>
     );
+  }
+
+  if (!session?.user) {
+    return null;
   }
 
   return children;
