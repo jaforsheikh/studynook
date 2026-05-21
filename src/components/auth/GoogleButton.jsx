@@ -4,7 +4,9 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { FcGoogle } from "react-icons/fc";
 
-export default function GoogleButton({ text = "Continue with Google" }) {
+export default function GoogleButton({
+  text = "Continue with Google",
+}) {
   const handleGoogleLogin = async () => {
     try {
       await authClient.signIn.social({
