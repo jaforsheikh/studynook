@@ -2,33 +2,29 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-
 import GoogleButton from "@/components/auth/GoogleButton";
 import { authClient } from "@/lib/auth-client";
-
 import { ArrowRight, LockKeyhole, Mail } from "lucide-react";
 import { toast } from "sonner";
 
-export default function LoginPage() {
-  const router = useRouter();
+const APP_URL =
+  process.env.NEXT_PUBLIC_APP_URL || "https://studynook-eight.vercel.app";
 
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     if (isSubmitting) return;
-
     setIsSubmitting(true);
 
     try {
       const res = await authClient.signIn.email({
         email,
         password,
-        callbackURL: "/dashboard",
+        callbackURL: `${APP_URL}/dashboard`,
       });
 
       if (res?.error) {
@@ -38,9 +34,8 @@ export default function LoginPage() {
       }
 
       toast.success("Login successful.");
-
-      router.replace("/dashboard");
-      router.refresh();
+      // Hard reload so the new session cookie is picked up immediately
+      window.location.href = "/dashboard";
     } catch (error) {
       console.log(error);
       toast.error("Invalid email or password.");
@@ -64,10 +59,8 @@ export default function LoginPage() {
           <h1 className="text-4xl font-black tracking-tight text-white">
             Welcome Back
           </h1>
-
           <p className="mt-3 text-sm leading-7 text-slate-400">
-            Login to manage bookings, explore study spaces, and access your
-            dashboard.
+            Login to manage bookings, explore study spaces, and access your dashboard.
           </p>
         </div>
 
@@ -76,10 +69,8 @@ export default function LoginPage() {
             <label className="mb-2 block text-sm font-semibold text-slate-300">
               Email Address
             </label>
-
             <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/40 bg-[#06110e] px-4 py-4">
               <Mail className="h-5 w-5 text-emerald-400" />
-
               <input
                 type="email"
                 required
@@ -93,10 +84,7 @@ export default function LoginPage() {
 
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <label className="text-sm font-semibold text-slate-300">
-                Password
-              </label>
-
+              <label className="text-sm font-semibold text-slate-300">Password</label>
               <Link
                 href="/forgot-password"
                 className="text-xs font-semibold text-emerald-300 hover:text-emerald-200"
@@ -104,10 +92,8 @@ export default function LoginPage() {
                 Forgot Password?
               </Link>
             </div>
-
             <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/40 bg-[#06110e] px-4 py-4">
               <LockKeyhole className="h-5 w-5 text-emerald-400" />
-
               <input
                 type="password"
                 required
@@ -118,14 +104,6 @@ export default function LoginPage() {
               />
             </div>
           </div>
-
-          <label className="flex items-center gap-3 text-sm text-slate-400">
-            <input
-              type="checkbox"
-              className="h-4 w-4 rounded border-emerald-700 bg-transparent"
-            />
-            Remember me
-          </label>
 
           <button
             type="submit"
@@ -139,11 +117,7 @@ export default function LoginPage() {
 
         <div className="my-6 flex items-center gap-4">
           <div className="h-px flex-1 bg-emerald-900/40" />
-
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-            Or
-          </span>
-
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Or</span>
           <div className="h-px flex-1 bg-emerald-900/40" />
         </div>
 
@@ -151,11 +125,8 @@ export default function LoginPage() {
 
         <div className="mt-8 text-center">
           <p className="text-sm text-slate-400">
-            Don’t have an account?{" "}
-            <Link
-              href="/register"
-              className="font-bold text-emerald-300 hover:text-emerald-200"
-            >
+            Don't have an account?{" "}
+            <Link href="/register" className="font-bold text-emerald-300 hover:text-emerald-200">
               Create Account
             </Link>
           </p>

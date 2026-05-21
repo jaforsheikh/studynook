@@ -2,11 +2,8 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-
 import GoogleButton from "@/components/auth/GoogleButton";
 import { authClient } from "@/lib/auth-client";
-
 import {
   ArrowRight,
   CheckCircle2,
@@ -15,19 +12,20 @@ import {
   User2,
   XCircle,
 } from "lucide-react";
-
 import { toast } from "sonner";
 
-export default function RegisterPage() {
-  const router = useRouter();
+const APP_URL =
+  process.env.NEXT_PUBLIC_APP_URL || "https://studynook-eight.vercel.app";
 
+export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const passwordRules = useMemo(() => {
     return {
-      length: password.length >= 6,
+      length: password.length >= 8,
       uppercase: /[A-Z]/.test(password),
       lowercase: /[a-z]/.test(password),
     };
@@ -38,33 +36,35 @@ export default function RegisterPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
     if (!isPasswordValid) {
       toast.error("Password does not meet the requirements.");
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       const res = await authClient.signUp.email({
         name,
         email,
         password,
+        callbackURL: `${APP_URL}/dashboard`,
       });
 
       if (res?.error) {
         toast.error(res.error.message || "Registration failed.");
+        setIsSubmitting(false);
         return;
       }
 
       toast.success("Account created successfully.");
-
-      setTimeout(() => {
-        router.push("/dashboard");
-        router.refresh();
-      }, 500);
+      window.location.href = "/dashboard";
     } catch (error) {
       console.log(error);
       toast.error("Registration failed.");
+      setIsSubmitting(false);
     }
   };
 
@@ -81,10 +81,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="mt-8 text-center">
-          <h1 className="text-4xl font-black tracking-tight text-white">
-            Create Account
-          </h1>
-
+          <h1 className="text-4xl font-black tracking-tight text-white">Create Account</h1>
           <p className="mt-3 text-sm leading-7 text-slate-400">
             Join StudyNook to book study rooms and manage your listings.
           </p>
@@ -92,13 +89,9 @@ export default function RegisterPage() {
 
         <form onSubmit={handleRegister} className="mt-10 space-y-5">
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-300">
-              Full Name
-            </label>
-
+            <label className="mb-2 block text-sm font-semibold text-slate-300">Full Name</label>
             <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/40 bg-[#06110e] px-4 py-4">
               <User2 className="h-5 w-5 text-emerald-400" />
-
               <input
                 type="text"
                 required
@@ -111,13 +104,9 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-300">
-              Email Address
-            </label>
-
+            <label className="mb-2 block text-sm font-semibold text-slate-300">Email Address</label>
             <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/40 bg-[#06110e] px-4 py-4">
               <Mail className="h-5 w-5 text-emerald-400" />
-
               <input
                 type="email"
                 required
@@ -130,13 +119,9 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-300">
-              Password
-            </label>
-
+            <label className="mb-2 block text-sm font-semibold text-slate-300">Password</label>
             <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/40 bg-[#06110e] px-4 py-4">
               <LockKeyhole className="h-5 w-5 text-emerald-400" />
-
               <input
                 type="password"
                 required
@@ -148,38 +133,25 @@ export default function RegisterPage() {
             </div>
 
             <div className="mt-3 space-y-2 text-xs">
-              <PasswordRule
-                valid={passwordRules.length}
-                text="At least 6 characters"
-              />
-              <PasswordRule
-                valid={passwordRules.uppercase}
-                text="At least one uppercase letter"
-              />
-              <PasswordRule
-                valid={passwordRules.lowercase}
-                text="At least one lowercase letter"
-              />
+              <PasswordRule valid={passwordRules.length} text="At least 8 characters" />
+              <PasswordRule valid={passwordRules.uppercase} text="At least one uppercase letter" />
+              <PasswordRule valid={passwordRules.lowercase} text="At least one lowercase letter" />
             </div>
           </div>
 
           <button
             type="submit"
-            disabled={!isPasswordValid}
+            disabled={!isPasswordValid || isSubmitting}
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-6 py-4 text-sm font-black text-slate-950 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
           >
-            Create Account
+            {isSubmitting ? "Creating account..." : "Create Account"}
             <ArrowRight className="h-5 w-5" />
           </button>
         </form>
 
         <div className="my-6 flex items-center gap-4">
           <div className="h-px flex-1 bg-emerald-900/40" />
-
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-            Or
-          </span>
-
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Or</span>
           <div className="h-px flex-1 bg-emerald-900/40" />
         </div>
 
@@ -188,10 +160,7 @@ export default function RegisterPage() {
         <div className="mt-8 text-center">
           <p className="text-sm text-slate-400">
             Already have an account?{" "}
-            <Link
-              href="/login"
-              className="font-bold text-emerald-300 hover:text-emerald-200"
-            >
+            <Link href="/login" className="font-bold text-emerald-300 hover:text-emerald-200">
               Login
             </Link>
           </p>
@@ -203,17 +172,8 @@ export default function RegisterPage() {
 
 function PasswordRule({ valid, text }) {
   return (
-    <div
-      className={`flex items-center gap-2 ${
-        valid ? "text-emerald-300" : "text-slate-500"
-      }`}
-    >
-      {valid ? (
-        <CheckCircle2 className="h-4 w-4" />
-      ) : (
-        <XCircle className="h-4 w-4" />
-      )}
-
+    <div className={`flex items-center gap-2 ${valid ? "text-emerald-300" : "text-slate-500"}`}>
+      {valid ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
       <span>{text}</span>
     </div>
   );
