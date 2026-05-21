@@ -6,6 +6,10 @@ import EmptyState from "@/components/shared/EmptyState";
 import { CalendarCheck, Clock, CreditCard, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://studynook-server-2.onrender.com";
+
 export default function MyBookingsPage() {
   const { data: session, isPending } = authClient.useSession();
 
@@ -15,21 +19,32 @@ export default function MyBookingsPage() {
   const userEmail = session?.user?.email;
 
   useEffect(() => {
-    if (!userEmail) return;
+    if (!userEmail) {
+      if (!isPending) setLoading(false);
+      return;
+    }
 
     const fetchBookings = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/bookings/my-bookings/${userEmail}`,
+          `${API_BASE_URL}/api/bookings/my-bookings/${userEmail}`,
           {
             credentials: "include",
+            cache: "no-store",
           }
         );
 
         const data = await res.json();
 
+        if (!res.ok) {
+          toast.error(data?.message || "Failed to load bookings.");
+          return;
+        }
+
         if (data.success) {
-          setBookings(data.bookings);
+          setBookings(data.bookings || []);
+        } else {
+          toast.error(data.message || "Failed to load bookings.");
         }
       } catch (error) {
         console.log(error);
@@ -40,16 +55,18 @@ export default function MyBookingsPage() {
     };
 
     fetchBookings();
-  }, [userEmail]);
+  }, [userEmail, isPending]);
 
   const handleCancel = async (id) => {
-    const confirmCancel = confirm("Are you sure you want to cancel this booking?");
+    const confirmCancel = confirm(
+      "Are you sure you want to cancel this booking?"
+    );
 
     if (!confirmCancel) return;
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/bookings/${id}/cancel`,
+        `${API_BASE_URL}/api/bookings/${id}/cancel`,
         {
           method: "PATCH",
           credentials: "include",
@@ -58,14 +75,17 @@ export default function MyBookingsPage() {
 
       const data = await res.json();
 
+      if (!res.ok) {
+        toast.error(data?.message || "Cancel failed.");
+        return;
+      }
+
       if (data.success) {
         toast.success("Booking cancelled successfully.");
 
         setBookings((prev) =>
           prev.map((booking) =>
-            booking._id === id
-              ? { ...booking, status: "cancelled" }
-              : booking
+            booking._id === id ? { ...booking, status: "cancelled" } : booking
           )
         );
       } else {

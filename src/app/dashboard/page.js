@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 import {
   CalendarDays,
   Building2,
@@ -8,7 +9,13 @@ import {
   BadgeDollarSign,
 } from "lucide-react";
 
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://studynook-server-2.onrender.com";
+
 export default function DashboardPage() {
+  const { data: session, isPending } = authClient.useSession();
+
   const [stats, setStats] = useState({
     totalListings: 0,
     totalBookings: 0,
@@ -18,18 +25,22 @@ export default function DashboardPage() {
 
   const [loading, setLoading] = useState(true);
 
+  const userEmail = session?.user?.email;
+
   useEffect(() => {
+    if (!userEmail) {
+      if (!isPending) setLoading(false);
+      return;
+    }
+
     const loadDashboardStats = async () => {
       try {
-        const user = JSON.parse(localStorage.getItem("studynook-user"));
-
-        if (!user?.email) {
-          setLoading(false);
-          return;
-        }
-
         const response = await fetch(
-          `http://localhost:5000/api/dashboard/stats/${user.email}`
+          `${API_BASE_URL}/api/dashboard/stats/${userEmail}`,
+          {
+            credentials: "include",
+            cache: "no-store",
+          }
         );
 
         const data = await response.json();
@@ -45,7 +56,7 @@ export default function DashboardPage() {
     };
 
     loadDashboardStats();
-  }, []);
+  }, [userEmail, isPending]);
 
   const cards = [
     {
@@ -92,7 +103,7 @@ export default function DashboardPage() {
 
           <div>
             <h1 className="text-4xl font-black tracking-tight">
-              Welcome Back
+              Welcome Back{session?.user?.name ? `, ${session.user.name}` : ""}
             </h1>
 
             <p className="mt-2 max-w-2xl text-lg text-slate-400">
@@ -124,7 +135,7 @@ export default function DashboardPage() {
                 </h3>
 
                 <div className="mt-4 text-5xl font-black tracking-tight">
-                  {loading ? "..." : card.value}
+                  {loading || isPending ? "..." : card.value}
                 </div>
               </div>
             </div>

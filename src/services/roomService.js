@@ -1,5 +1,8 @@
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://studynook-server-2.onrender.com";
+
+const API_URL = `${API_BASE_URL}/api`;
 
 /*
 GET ALL ROOMS

@@ -6,6 +6,10 @@ import { Clock3 } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://studynook-server-2.onrender.com";
+
 const timeSlots = [
   "08:00 AM",
   "09:00 AM",
@@ -86,7 +90,7 @@ export default function BookingCalendar({ room }) {
         userName: session.user.name,
       };
 
-      const res = await fetch("http://localhost:5000/api/bookings", {
+      const res = await fetch(`${API_BASE_URL}/api/bookings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,6 +100,11 @@ export default function BookingCalendar({ room }) {
       });
 
       const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message || "Booking failed.");
+        return;
+      }
 
       if (data.success) {
         toast.success("Booking confirmed successfully!");

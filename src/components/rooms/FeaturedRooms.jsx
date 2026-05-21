@@ -5,8 +5,9 @@ import RoomCard from "@/components/rooms/RoomCard";
 import EmptyState from "@/components/shared/EmptyState";
 import { toast } from "sonner";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://studynook-server-2.onrender.com";
 
 export default function FeaturedRooms() {
   const [rooms, setRooms] = useState([]);
@@ -15,19 +16,25 @@ export default function FeaturedRooms() {
   useEffect(() => {
     const fetchLatestRooms = async () => {
       try {
-        const res = await fetch(`${API_URL}/rooms/latest`, {
+        const res = await fetch(`${API_BASE_URL}/api/rooms/latest`, {
           credentials: "include",
+          cache: "no-store",
         });
 
         const data = await res.json();
 
+        if (!res.ok) {
+          toast.error(data?.message || "Failed to load featured rooms.");
+          return;
+        }
+
         if (data.success) {
-          setRooms(data.rooms);
+          setRooms(data.rooms || []);
         } else {
           toast.error(data.message || "Failed to load featured rooms.");
         }
       } catch (error) {
-        console.log(error);
+        console.log("Featured rooms error:", error);
         toast.error("Failed to load featured rooms.");
       } finally {
         setLoading(false);
