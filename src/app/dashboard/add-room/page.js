@@ -4,7 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { createRoom } from "@/services/roomService";
-import { Building2, ImageIcon, Layers, MapPin, Users, Wallet } from "lucide-react";
+import {
+  Building2,
+  ImageIcon,
+  Layers,
+  MapPin,
+  Users,
+  Wallet,
+} from "lucide-react";
 import { toast } from "sonner";
 
 const amenitiesList = [
@@ -14,6 +21,21 @@ const amenitiesList = [
   "Power Outlets",
   "Quiet Zone",
   "Air Conditioning",
+  "Coffee",
+  "Parking",
+];
+
+const roomImages = [
+  "/assets/rooms/quiet-pod.jpg",
+  "/assets/rooms/group-studio.jpg",
+  "/assets/rooms/atrium-reading.jpg",
+  "/assets/rooms/innovation-lab.jpg",
+  "/assets/rooms/silent-carrel.jpg",
+  "/assets/rooms/cedar-room.jpg",
+  "/assets/rooms/skyline-suite.jpg",
+  "/assets/rooms/green-leaf.jpg",
+  "/assets/rooms/midnight-lounge.jpg",
+  "/assets/rooms/brainstorm-studio.jpg",
 ];
 
 export default function AddRoomPage() {
@@ -22,7 +44,7 @@ export default function AddRoomPage() {
 
   const [formData, setFormData] = useState({
     name: "",
-    image: "",
+    image: roomImages[0],
     location: "",
     floor: "",
     capacity: "",
@@ -35,11 +57,7 @@ export default function AddRoomPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAmenity = (amenity) => {
@@ -60,15 +78,15 @@ export default function AddRoomPage() {
       return;
     }
 
-    if (!formData.name || !formData.image || !formData.location || !formData.price) {
+    if (!formData.name || !formData.location || !formData.price) {
       toast.error("Please fill all required fields.");
       return;
     }
 
     const roomData = {
       ...formData,
-      capacity: Number(formData.capacity),
-      price: Number(formData.price),
+      capacity: Number(formData.capacity) || 1,
+      price: Number(formData.price) || 0,
       owner: {
         name: session.user.name,
         email: session.user.email,
@@ -95,11 +113,6 @@ export default function AddRoomPage() {
         Create New Room Listing
       </h1>
 
-      <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-400">
-        Add your study room details, amenities, pricing, and availability to
-        start receiving bookings.
-      </p>
-
       <form
         onSubmit={handleSubmit}
         className="mt-10 rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-8"
@@ -107,61 +120,34 @@ export default function AddRoomPage() {
         <h2 className="text-2xl font-black text-white">Basic Information</h2>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          <InputBox
-            icon={Building2}
-            label="Room Name *"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Premium Silent Room"
-          />
+          <InputBox icon={Building2} label="Room Name *" name="name" value={formData.name} onChange={handleChange} placeholder="Premium Silent Room" />
+          <InputBox icon={MapPin} label="Location *" name="location" value={formData.location} onChange={handleChange} placeholder="Dhanmondi, Dhaka" />
+          <InputBox icon={Wallet} label="Hourly Price *" name="price" type="number" value={formData.price} onChange={handleChange} placeholder="120" />
+          <InputBox icon={Users} label="Capacity" name="capacity" type="number" value={formData.capacity} onChange={handleChange} placeholder="4" />
+          <InputBox icon={Layers} label="Floor" name="floor" value={formData.floor} onChange={handleChange} placeholder="3rd Floor" />
 
-          <InputBox
-            icon={MapPin}
-            label="Location *"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            placeholder="Dhanmondi, Dhaka"
-          />
+          <div>
+            <label className="mb-3 block text-sm font-bold text-slate-300">
+              Room Image *
+            </label>
 
-          <InputBox
-            icon={Wallet}
-            label="Hourly Price *"
-            name="price"
-            type="number"
-            value={formData.price}
-            onChange={handleChange}
-            placeholder="120"
-          />
+            <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/40 bg-[#06110e] px-5 py-4">
+              <ImageIcon className="h-5 w-5 text-emerald-400" />
 
-          <InputBox
-            icon={Users}
-            label="Capacity"
-            name="capacity"
-            type="number"
-            value={formData.capacity}
-            onChange={handleChange}
-            placeholder="4"
-          />
-
-          <InputBox
-            icon={Layers}
-            label="Floor"
-            name="floor"
-            value={formData.floor}
-            onChange={handleChange}
-            placeholder="3rd Floor"
-          />
-
-          <InputBox
-            icon={ImageIcon}
-            label="Image URL *"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            placeholder="https://images.unsplash.com/..."
-          />
+              <select
+                name="image"
+                value={formData.image}
+                onChange={handleChange}
+                className="w-full bg-[#06110e] text-white outline-none"
+              >
+                {roomImages.map((image) => (
+                  <option key={image} value={image}>
+                    {image}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="mt-6">
