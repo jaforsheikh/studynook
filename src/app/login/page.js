@@ -18,11 +18,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (!isPending && session?.user) {
-      router.replace("/dashboard");
-    }
-  }, [isPending, session, router]);
+useEffect(() => {
+  if (!isPending && session?.user) {
+    window.location.replace("/dashboard");
+  }
+}, [isPending, session]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
