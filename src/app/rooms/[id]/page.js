@@ -17,15 +17,18 @@ import {
   MapPin,
   ShieldCheck,
   Sparkles,
+  Star,
   Users,
   Wifi,
 } from "lucide-react";
 
 import { toast } from "sonner";
 
+const fallbackImage = "/assets/rooms/quiet-pod.jpg";
+
 export default function RoomDetailsPage() {
   const params = useParams();
-  const id = params.id;
+  const id = params?.id;
 
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,28 +38,26 @@ export default function RoomDetailsPage() {
       try {
         const data = await getRoomById(id);
 
-        if (data.success) {
+        if (data?.success) {
           setRoom(data.room);
         } else {
-          toast.error(data.message || "Room not found.");
+          toast.error(data?.message || "Room not found.");
         }
       } catch (error) {
-        console.log(error);
+        console.log("Room details fetch error:", error);
         toast.error("Failed to load room details.");
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) {
-      fetchRoom();
-    }
+    if (id) fetchRoom();
   }, [id]);
 
   if (loading) {
     return (
       <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
-        <div className="mx-auto max-w-7xl rounded-4xl border border-emerald-900/30 bg-white/3 p-10">
+        <div className="mx-auto max-w-7xl rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-10">
           <p className="text-slate-400">Loading room details...</p>
         </div>
       </main>
@@ -78,6 +79,10 @@ export default function RoomDetailsPage() {
     );
   }
 
+  const image = room.image || fallbackImage;
+  const roomName = room.name || room.title || "Study Room";
+  const amenities = Array.isArray(room.amenities) ? room.amenities : [];
+
   return (
     <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
       <div className="mx-auto max-w-7xl">
@@ -91,23 +96,35 @@ export default function RoomDetailsPage() {
 
         <div className="grid gap-10 lg:grid-cols-[1.35fr_0.75fr]">
           <section>
-            <div className="relative h-480px overflow-hidden rounded-[34px] border border-emerald-900/30">
+            <div className="relative h-[480px] overflow-hidden rounded-[34px] border border-emerald-900/30">
               <Image
-                src={room.image}
-                alt={room.name}
+                src={image}
+                alt={roomName}
                 fill
+                unoptimized
                 className="object-cover"
               />
 
-              <div className="absolute left-5 top-5 rounded-full bg-emerald-500/90 px-5 py-2 text-sm font-black text-white">
-                {room.availableToday ? "Available Today" : "Available"}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+              <div
+                className={`absolute left-5 top-5 rounded-full px-5 py-2 text-sm font-black text-white ${
+                  room.availableToday ? "bg-emerald-500/90" : "bg-red-500/90"
+                }`}
+              >
+                {room.availableToday ? "Available Today" : "Unavailable Today"}
+              </div>
+
+              <div className="absolute right-5 top-5 flex items-center gap-2 rounded-full bg-amber-400 px-4 py-2 text-sm font-black text-slate-950">
+                <Star className="h-4 w-4 fill-slate-950" />
+                {room.rating || 4.8}
               </div>
             </div>
 
             <div className="mt-10 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
               <div>
-                <h1 className="text-5xl font-black tracking-tight text-white">
-                  {room.name}
+                <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">
+                  {roomName}
                 </h1>
 
                 <p className="mt-3 text-sm font-semibold text-slate-500">
@@ -116,58 +133,46 @@ export default function RoomDetailsPage() {
               </div>
 
               <span className="rounded-full bg-emerald-500/10 px-5 py-2 text-sm font-bold text-emerald-300">
-                {room.bookingCount || 0} bookings
+                {room.bookingCount || 0} Total Bookings
               </span>
             </div>
 
             <div className="mt-6 flex flex-wrap gap-5 text-slate-400">
-              <InfoLine icon={MapPin} text={room.location} />
-              <InfoLine icon={Layers} text={room.floor || "N/A"} />
-              <InfoLine icon={Users} text={`Up to ${room.capacity} people`} />
+              <InfoLine icon={MapPin} text={room.location || "Location N/A"} />
+              <InfoLine icon={Layers} text={room.floor || "Floor N/A"} />
+              <InfoLine
+                icon={Users}
+                text={`Up to ${room.capacity || 1} people`}
+              />
               <InfoLine icon={Wifi} text="High-speed Wi-Fi" />
             </div>
 
             <p className="mt-8 max-w-4xl text-lg leading-9 text-slate-300">
-              {room.description}
+              {room.description || "A quiet study space for focused work."}
             </p>
 
             <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              <HighlightCard
-                icon={Clock}
-                title="Hourly Booking"
-                text="Book flexible hourly slots based on your study schedule."
-              />
-
-              <HighlightCard
-                icon={ShieldCheck}
-                title="Verified Space"
-                text="Managed study environment with controlled availability."
-              />
-
-              <HighlightCard
-                icon={Sparkles}
-                title="Clean & Focused"
-                text="Designed for productive sessions, projects, and deep work."
-              />
-
-              <HighlightCard
-                icon={CalendarCheck}
-                title="Real-time Slots"
-                text="Availability will be verified during booking confirmation."
-              />
+              <HighlightCard icon={Clock} title="Hourly Booking" text="Book flexible hourly slots based on your study schedule." />
+              <HighlightCard icon={ShieldCheck} title="Verified Space" text="Managed study environment with controlled availability." />
+              <HighlightCard icon={Sparkles} title="Clean & Focused" text="Designed for productive sessions, projects, and deep work." />
+              <HighlightCard icon={CalendarCheck} title="Real-time Slots" text="Availability will be verified during booking confirmation." />
             </div>
 
             <DetailsSection title="Amenities">
-              <div className="flex flex-wrap gap-3">
-                {room.amenities?.map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-emerald-900/50 bg-emerald-500/5 px-4 py-2 text-sm font-semibold text-emerald-200"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
+              {amenities.length > 0 ? (
+                <div className="flex flex-wrap gap-3">
+                  {amenities.map((item) => (
+                    <span
+                      key={item}
+                      className="rounded-full border border-emerald-900/50 bg-emerald-500/5 px-4 py-2 text-sm font-semibold text-emerald-200"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-slate-400">No amenities listed yet.</p>
+              )}
             </DetailsSection>
 
             <DetailsSection title="House Rules">
@@ -182,10 +187,10 @@ export default function RoomDetailsPage() {
             </DetailsSection>
 
             <DetailsSection title="Location & Access">
-              <div className="rounded-[28px] border border-emerald-900/30 bg-white/3 p-6">
+              <div className="rounded-[28px] border border-emerald-900/30 bg-white/[0.03] p-6">
                 <p className="flex items-center gap-2 text-lg font-bold text-white">
                   <MapPin className="h-5 w-5 text-emerald-400" />
-                  {room.location}
+                  {room.location || "Location N/A"}
                 </p>
 
                 <p className="mt-3 text-sm leading-7 text-slate-400">
@@ -198,24 +203,20 @@ export default function RoomDetailsPage() {
           </section>
 
           <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
-            <div className="rounded-4xl border border-emerald-900/40 bg-white/4 p-8 backdrop-blur-xl">
+            <div className="rounded-[32px] border border-emerald-900/40 bg-white/[0.04] p-8 backdrop-blur-xl">
               <div className="flex items-end justify-between">
                 <h2 className="text-4xl font-black text-amber-400">
-                  ৳{room.price}
+                  ৳{room.price || 0}
                 </h2>
-
                 <span className="text-sm font-semibold text-slate-400">
                   per hour
                 </span>
               </div>
 
               <div className="mt-8 space-y-4 text-slate-300">
-                <InfoLine icon={Layers} text={room.floor || "N/A"} />
-                <InfoLine icon={Users} text={`Up to ${room.capacity} people`} />
-                <InfoLine
-                  icon={DollarSign}
-                  text={`${room.bookingCount || 0} total bookings`}
-                />
+                <InfoLine icon={Layers} text={room.floor || "Floor N/A"} />
+                <InfoLine icon={Users} text={`Up to ${room.capacity || 1} people`} />
+                <InfoLine icon={DollarSign} text={`${room.bookingCount || 0} total bookings`} />
               </div>
 
               <Link
@@ -227,12 +228,11 @@ export default function RoomDetailsPage() {
               </Link>
 
               <p className="mt-4 text-center text-xs leading-6 text-slate-500">
-                Booking confirmation depends on selected date and time
-                availability.
+                Booking confirmation depends on selected date and time availability.
               </p>
             </div>
 
-            <div className="rounded-4xl border border-emerald-900/40 bg-white/4 p-8">
+            <div className="rounded-[32px] border border-emerald-900/40 bg-white/[0.04] p-8">
               <p className="text-xs font-black uppercase tracking-widest text-slate-400">
                 Listed By
               </p>
@@ -248,7 +248,7 @@ export default function RoomDetailsPage() {
               </div>
             </div>
 
-            <div className="rounded-4xl border border-emerald-900/40 bg-emerald-500/5 p-8">
+            <div className="rounded-[32px] border border-emerald-900/40 bg-emerald-500/5 p-8">
               <h3 className="text-xl font-black text-white">
                 Booking Safety Note
               </h3>
@@ -276,13 +276,12 @@ function InfoLine({ icon: Icon, text }) {
 
 function HighlightCard({ icon: Icon, title, text }) {
   return (
-    <div className="rounded-[28px] border border-emerald-900/30 bg-white/3 p-6">
+    <div className="rounded-[28px] border border-emerald-900/30 bg-white/[0.03] p-6">
       <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400">
         <Icon className="h-6 w-6" />
       </div>
 
       <h3 className="mt-5 text-lg font-black text-white">{title}</h3>
-
       <p className="mt-2 text-sm leading-7 text-slate-400">{text}</p>
     </div>
   );
