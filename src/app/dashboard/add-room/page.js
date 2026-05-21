@@ -115,7 +115,7 @@ export default function AddRoomPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="mt-10 rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-8"
+        className="mt-10 rounded-4xl border border-emerald-900/30 bg-white/3 p-8"
       >
         <h2 className="text-2xl font-black text-white">Basic Information</h2>
 

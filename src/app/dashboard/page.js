@@ -121,7 +121,7 @@ export default function DashboardPage() {
           return (
             <div
               key={card.title}
-              className="rounded-[32px] border border-emerald-900/20 bg-gradient-to-br from-[#071815] to-[#04110f] p-7"
+              className="rounded-4xl border border-emerald-900/20 bg-linear-to-br from-[#071815] to-[#04110f] p-7"
             >
               <div
                 className={`flex h-16 w-16 items-center justify-center rounded-2xl ${card.bg}`}

@@ -73,7 +73,7 @@ export default function DashboardSidebar() {
         })}
       </nav>
 
-      <div className="mt-10 rounded-3xl border border-emerald-900/30 bg-white/[0.03] p-5">
+      <div className="mt-10 rounded-3xl border border-emerald-900/30 bg-white/3 p-5">
         <p className="text-sm font-bold text-white">Upgrade to Host</p>
         <p className="mt-2 text-xs leading-6 text-slate-500">
           List your study rooms and start earning from hourly bookings.

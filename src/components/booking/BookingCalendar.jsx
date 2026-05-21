@@ -127,7 +127,7 @@ export default function BookingCalendar({ room }) {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
-      <div className="rounded-[32px] border border-emerald-900/30 bg-[#071411] p-8">
+      <div className="rounded-4xl border border-emerald-900/30 bg-[#071411] p-8">
         <h2 className="text-4xl font-black text-white">Select Time Slots</h2>
 
         <p className="mt-4 text-lg text-slate-400">
@@ -212,7 +212,7 @@ export default function BookingCalendar({ room }) {
         </div>
       </div>
 
-      <aside className="rounded-[32px] border border-emerald-900/30 bg-[#071411] p-8">
+      <aside className="rounded-4xl border border-emerald-900/30 bg-[#071411] p-8">
         <h2 className="text-4xl font-black text-white">Booking Summary</h2>
 
         <div className="mt-10 space-y-6">
@@ -234,7 +234,7 @@ export default function BookingCalendar({ room }) {
           type="button"
           onClick={handleBooking}
           disabled={!selectedDate || selectedSlots.length === 0 || isSubmitting}
-          className="mt-10 flex h-20 w-full items-center justify-center rounded-[24px] bg-amber-400 text-2xl font-black text-black transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+          className="mt-10 flex h-20 w-full items-center justify-center rounded-3xl bg-amber-400 text-2xl font-black text-black transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
         >
           {isSubmitting ? "Confirming..." : "Confirm Booking"}
         </button>

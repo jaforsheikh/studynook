@@ -130,7 +130,7 @@ export default function EditRoomPage() {
 
   if (loading) {
     return (
-      <div className="rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-10">
+      <div className="rounded-4xl border border-emerald-900/30 bg-white/3 p-10">
         <p className="text-slate-400">Loading room information...</p>
       </div>
     );
@@ -162,7 +162,7 @@ export default function EditRoomPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="mt-10 rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-8"
+        className="mt-10 rounded-4xl border border-emerald-900/30 bg-white/3 p-8"
       >
         <h2 className="text-2xl font-black text-white">Room Information</h2>
 

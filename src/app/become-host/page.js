@@ -28,7 +28,7 @@ export default function BecomeHostPage() {
             </Link>
           </div>
 
-          <div className="rounded-[36px] border border-emerald-900/30 bg-white/[0.03] p-8">
+          <div className="rounded-[36px] border border-emerald-900/30 bg-white/3 p-8">
             <div className="grid gap-5">
               {[
                 { icon: Building2, title: "Create Room Listing", text: "Add photos, amenities, location, capacity, and hourly pricing." },

@@ -71,17 +71,14 @@ export default function HowItWorks() {
                 className="group relative overflow-hidden rounded-[30px] border border-emerald-900/30 bg-white/3 p-8 backdrop-blur-xl transition duration-300 hover:-translate-y-2 hover:border-emerald-700/40"
               >
                 
-                {/* NUMBER */}
                 <div className="absolute right-6 top-6 text-5xl font-black text-white/5">
                   {step.id}
                 </div>
 
-                {/* ICON */}
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400">
                   <Icon className="h-8 w-8" />
                 </div>
 
-                {/* CONTENT */}
                 <h3 className="mt-8 text-2xl font-bold text-white">
                   {step.title}
                 </h3>
@@ -90,7 +87,6 @@ export default function HowItWorks() {
                   {step.description}
                 </p>
 
-                {/* HOVER GLOW */}
                 <div className="absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100">
                   <div className="absolute bottom-0 left-0 h-1 w-full bg-linear-to-r from-emerald-400 to-cyan-400"></div>
                 </div>

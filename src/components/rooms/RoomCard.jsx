@@ -12,7 +12,7 @@ export default function RoomCard({ room }) {
   const roomId = room._id || room.id || room.slug;
 
   return (
-    <div className="group overflow-hidden rounded-[32px] border border-emerald-900/40 bg-[#071510] transition duration-300 hover:-translate-y-1 hover:border-emerald-500/40">
+    <div className="group overflow-hidden rounded-4xl border border-emerald-900/40 bg-[#071510] transition duration-300 hover:-translate-y-1 hover:border-emerald-500/40">
 
       {/* IMAGE */}
       <div className="relative h-72 w-full overflow-hidden">
@@ -25,7 +25,7 @@ export default function RoomCard({ room }) {
         />
 
         {/* OVERLAY */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
 
         {/* RATING */}
         <div className="absolute right-5 top-5 flex items-center gap-1 rounded-full bg-amber-400 px-3 py-1 text-sm font-black text-slate-950">

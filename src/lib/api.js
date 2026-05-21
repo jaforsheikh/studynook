@@ -3,7 +3,7 @@ import axios from "axios";
 const api = axios.create({
   baseURL:
     process.env.NEXT_PUBLIC_API_URL ||
-    "https://studynook-server-2.onrender.com",
+    "https://studynook-server-beta.vercel.app",
 
   withCredentials: true,
 
@@ -14,7 +14,6 @@ const api = axios.create({
 
 api.interceptors.response.use(
   (response) => response,
-
   (error) => {
     const message =
       error?.response?.data?.message ||

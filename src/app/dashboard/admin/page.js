@@ -75,7 +75,7 @@ export default function AdminDashboardPage() {
           return (
             <div
               key={item.title}
-              className="rounded-[28px] border border-emerald-900/30 bg-white/[0.03] p-6 backdrop-blur-xl"
+              className="rounded-4xl border border-emerald-900/30 bg-white/3 p-6 backdrop-blur-xl"
             >
               <div
                 className={`flex h-14 w-14 items-center justify-center rounded-2xl ${item.color}`}
@@ -96,7 +96,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="mt-14 grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-6 backdrop-blur-xl">
+        <div className="rounded-4xl border border-emerald-900/30 bg-white/3 p-6 backdrop-blur-xl">
           <div className="flex items-center gap-3">
             <ShieldCheck className="h-6 w-6 text-emerald-400" />
             <h2 className="text-2xl font-black text-white">
@@ -140,7 +140,7 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-6 backdrop-blur-xl">
+        <div className="rounded-4xl border border-emerald-900/30 bg-white/[0.03] p-6 backdrop-blur-xl">
           <div className="flex items-center gap-3">
             <Star className="h-6 w-6 fill-amber-400 text-amber-400" />
             <h2 className="text-2xl font-black text-white">

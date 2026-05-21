@@ -2,21 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
+import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import { deleteRoom, getMyListings } from "@/services/roomService";
 
 import EmptyState from "@/components/shared/EmptyState";
 
-import {
-  Eye,
-  MapPin,
-  Pencil,
-  Plus,
-  Star,
-  Trash2,
-  Users,
-} from "lucide-react";
+import { Eye, MapPin, Pencil, Plus, Star, Trash2, Users } from "lucide-react";
 
 import { toast } from "sonner";
 
@@ -74,7 +66,7 @@ export default function MyListingsPage() {
 
   if (isPending || loading) {
     return (
-      <div className="rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-10">
+      <div className="rounded-4xl border border-emerald-900/30 bg-white/3 p-10">
         <p className="text-slate-400">Loading your listings...</p>
       </div>
     );
@@ -119,13 +111,15 @@ export default function MyListingsPage() {
             {rooms.map((room) => (
               <div
                 key={room._id}
-                className="overflow-hidden rounded-[32px] border border-emerald-900/30 bg-white/[0.03] backdrop-blur-xl"
+                className="overflow-hidden rounded-4xl border border-emerald-900/30 bg-white/3 backdrop-blur-xl"
               >
                 <div className="relative h-72 overflow-hidden">
-                  <img
-                    src={room.image}
-                    alt={room.name}
-                    className="h-full w-full object-cover"
+                  <Image
+                    src={room.image || "/assets/rooms/quiet-pod.jpg"}
+                    alt={room.name || "Study room"}
+                    fill
+                    unoptimized
+                    className="object-cover"
                   />
 
                   <div className="absolute left-5 top-5 rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white">
@@ -163,10 +157,7 @@ export default function MyListingsPage() {
                       icon={Users}
                     />
 
-                    <MiniStat
-                      label="Bookings"
-                      value={room.bookingCount || 0}
-                    />
+                    <MiniStat label="Bookings" value={room.bookingCount || 0} />
 
                     <MiniStat
                       label="Earnings"

@@ -59,7 +59,7 @@ export default function RoomDetailsPage() {
   if (loading) {
     return (
       <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
-        <div className="mx-auto max-w-7xl rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-10">
+        <div className="mx-auto max-w-7xl rounded-4xl border border-emerald-900/30 bg-white/3 p-10">
           <p className="text-slate-400">Loading room details...</p>
         </div>
       </main>
@@ -101,7 +101,7 @@ export default function RoomDetailsPage() {
 
         <div className="grid gap-10 lg:grid-cols-[1.35fr_0.75fr]">
           <section>
-            <div className="relative h-[480px] overflow-hidden rounded-[34px] border border-emerald-900/30">
+            <div className="relative h-480px overflow-hidden rounded-[34px] border border-emerald-900/30">
               <Image
                 src={image}
                 alt={roomName}
@@ -110,7 +110,7 @@ export default function RoomDetailsPage() {
                 className="object-cover"
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
 
               <div
                 className={`absolute left-5 top-5 rounded-full px-5 py-2 text-sm font-black text-white ${
@@ -213,7 +213,7 @@ export default function RoomDetailsPage() {
             </DetailsSection>
 
             <DetailsSection title="Location & Access">
-              <div className="rounded-[28px] border border-emerald-900/30 bg-white/[0.03] p-6">
+              <div className="rounded-[28px] border border-emerald-900/30 bg-white/3 p-6">
                 <p className="flex items-center gap-2 text-lg font-bold text-white">
                   <MapPin className="h-5 w-5 text-emerald-400" />
                   {room.location || "Location N/A"}
@@ -229,7 +229,7 @@ export default function RoomDetailsPage() {
           </section>
 
           <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
-            <div className="rounded-[32px] border border-emerald-900/40 bg-white/[0.04] p-8 backdrop-blur-xl">
+            <div className="rounded-4xl border border-emerald-900/40 bg-white/4 p-8 backdrop-blur-xl">
               <div className="flex items-end justify-between">
                 <h2 className="text-4xl font-black text-amber-400">
                   ৳{room.price || 0}
@@ -266,7 +266,7 @@ export default function RoomDetailsPage() {
               </p>
             </div>
 
-            <div className="rounded-[32px] border border-emerald-900/40 bg-white/[0.04] p-8">
+            <div className="rounded-4xl border border-emerald-900/40 bg-white/4 p-8">
               <p className="text-xs font-black uppercase tracking-widest text-slate-400">
                 Listed By
               </p>
@@ -282,7 +282,7 @@ export default function RoomDetailsPage() {
               </div>
             </div>
 
-            <div className="rounded-[32px] border border-emerald-900/40 bg-emerald-500/5 p-8">
+            <div className="rounded-4xl border border-emerald-900/40 bg-emerald-500/5 p-8">
               <h3 className="text-xl font-black text-white">
                 Booking Safety Note
               </h3>

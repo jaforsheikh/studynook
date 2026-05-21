@@ -11,7 +11,7 @@ export default function RoomFilters({
   setCapacity,
 }) {
   return (
-    <div className="rounded-[28px] border border-emerald-900/30 bg-white/[0.03] p-5 backdrop-blur-xl">
+    <div className="rounded-4xl border border-emerald-900/30 bg-white/3 p-5 backdrop-blur-xl">
       <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr_1fr]">
         <div className="flex items-center gap-3 rounded-2xl bg-[#06110e] px-4 py-4">
           <Search className="h-5 w-5 text-emerald-400" />

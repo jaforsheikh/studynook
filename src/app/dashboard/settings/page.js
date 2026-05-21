@@ -170,7 +170,7 @@ export default function SettingsPage() {
           </div>
 
           {/* NOTIFICATIONS */}
-          <div className="rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-8 backdrop-blur-xl">
+          <div className="rounded-4xl border border-emerald-900/30 bg-white/3 p-8 backdrop-blur-xl">
             <div className="mb-8 flex items-center gap-3">
               <Bell className="h-7 w-7 text-emerald-400" />
 

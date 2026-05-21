@@ -55,7 +55,7 @@ export default function BookRoomPage() {
   if (isPending || loading) {
     return (
       <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
-        <div className="mx-auto max-w-7xl rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-10">
+        <div className="mx-auto max-w-7xl rounded-4xl border border-emerald-900/30 bg-white/3 p-10">
           <p className="text-slate-400">Loading booking page...</p>
         </div>
       </main>
@@ -75,7 +75,7 @@ export default function BookRoomPage() {
         </div>
       </main>
     );
-  }
+  } 
 
   const image = room.image || "/assets/rooms/quiet-pod.jpg";
 
@@ -91,8 +91,8 @@ export default function BookRoomPage() {
         </Link>
 
         <div className="grid gap-10 lg:grid-cols-[1fr_480px]">
-          <section className="overflow-hidden rounded-[36px] border border-emerald-900/30 bg-white/[0.03]">
-            <div className="relative h-[420px] w-full">
+          <section className="overflow-hidden rounded-[36px] border border-emerald-900/30 bg-white/3">
+            <div className="relative h-105 w-full">
               <Image
                 src={image}
                 alt={room.name || "Study room"}
@@ -101,7 +101,7 @@ export default function BookRoomPage() {
                 className="object-cover"
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
 
               <div className="absolute bottom-8 left-8 right-8">
                 <span className="rounded-full border border-emerald-400/30 bg-emerald-500/20 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-emerald-200">

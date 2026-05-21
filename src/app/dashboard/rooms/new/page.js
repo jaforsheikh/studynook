@@ -28,7 +28,7 @@ export default function AddRoomPage() {
       <form className="mt-12 space-y-8">
         
         {/* BASIC INFO */}
-        <div className="rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-8 backdrop-blur-xl">
+        <div className="rounded-4xl border border-emerald-900/30 bg-white/3 p-8 backdrop-blur-xl">
           <h2 className="text-2xl font-black text-white">
             Basic Information
           </h2>
@@ -115,7 +115,7 @@ export default function AddRoomPage() {
         </div>
 
         {/* AMENITIES */}
-        <div className="rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-8 backdrop-blur-xl">
+        <div className="rounded-4xl border border-emerald-900/30 bg-white/3 p-8 backdrop-blur-xl">
           <h2 className="text-2xl font-black text-white">
             Amenities
           </h2>
@@ -143,7 +143,7 @@ export default function AddRoomPage() {
         </div>
 
         {/* IMAGE UPLOAD */}
-        <div className="rounded-[32px] border border-dashed border-emerald-800/40 bg-white/[0.03] p-10 text-center backdrop-blur-xl">
+        <div className="rounded-4xl border border-dashed border-emerald-800/40 bg-white/3 p-10 text-center backdrop-blur-xl">
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-emerald-500/10 text-emerald-400">
             <ImagePlus className="h-10 w-10" />
           </div>

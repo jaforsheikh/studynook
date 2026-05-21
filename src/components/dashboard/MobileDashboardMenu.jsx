@@ -46,7 +46,7 @@ export default function MobileDashboardMenu() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="grid h-11 w-11 place-items-center rounded-2xl border border-emerald-900/30 bg-white/[0.03] text-slate-300 lg:hidden"
+        className="grid h-11 w-11 place-items-center rounded-2xl border border-emerald-900/30 bg-white/3 text-slate-300 lg:hidden"
       >
         <Menu className="h-5 w-5" />
       </button>
@@ -79,7 +79,7 @@ export default function MobileDashboardMenu() {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="grid h-10 w-10 place-items-center rounded-2xl border border-emerald-900/30 bg-white/[0.03] text-slate-300"
+                className="grid h-10 w-10 place-items-center rounded-2xl border border-emerald-900/30 bg-white/3 text-slate-300"
               >
                 <X className="h-5 w-5" />
               </button>

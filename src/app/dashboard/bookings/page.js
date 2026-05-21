@@ -134,7 +134,7 @@ export default function MyBookingsPage() {
             {bookings.map((booking) => (
               <div
                 key={booking._id}
-                className="rounded-[30px] border border-emerald-900/30 bg-white/[0.03] p-6 backdrop-blur-xl"
+                className="rounded-[30px] border border-emerald-900/30 bg-white/3 p-6 backdrop-blur-xl"
               >
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                   <div>

@@ -113,7 +113,7 @@ export default function BookingCalendar({ room }) {
   };
 
   return (
-    <div className="rounded-[32px] border border-emerald-900/40 bg-white/[0.03] p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
+    <div className="rounded-4xl border border-emerald-900/40 bg-white/3 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
       <h3 className="text-2xl font-black text-white">Book This Room</h3>
 
       <p className="mt-2 text-sm text-slate-400">

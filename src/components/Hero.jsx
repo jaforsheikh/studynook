@@ -24,7 +24,7 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden bg-[#f3f7f5] pt-24">
-      <div className="absolute left-1/2 top-20 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-emerald-300/20 blur-3xl" />
+      <div className="absolute left-1/2 top-20 h-125 w-125 -translate-x-1/2 rounded-full bg-emerald-300/20 blur-3xl" />
 
       <div className="relative mx-auto grid max-w-7xl gap-16 px-4 py-20 lg:grid-cols-2 lg:items-center">
         {/* LEFT */}
@@ -47,7 +47,7 @@ export default function Hero() {
           </p>
 
           {/* SEARCH BAR */}
-          <div className="mt-10 rounded-[32px] bg-white p-4 shadow-2xl shadow-black/5">
+          <div className="mt-10 rounded-4xl bg-white p-4 shadow-2xl shadow-black/5">
             <div className="grid gap-4 lg:grid-cols-4">
               {/* LOCATION */}
               <div className="flex items-center gap-3 rounded-2xl bg-slate-100 px-4 py-4">
@@ -129,13 +129,13 @@ export default function Hero() {
               alt="Study Room"
               width={900}
               height={1000}
-              className="h-[780px] w-full object-cover"
+              className="h-195 w-full object-cover"
               priority
             />
           </div>
 
           {/* FLOATING CARD */}
-          <div className="absolute bottom-8 left-8 right-8 rounded-[32px] bg-white p-8 shadow-2xl">
+          <div className="absolute bottom-8 left-8 right-8 rounded-4xl bg-white p-8 shadow-2xl">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-4xl font-black text-slate-950">

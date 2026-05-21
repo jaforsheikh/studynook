@@ -152,7 +152,7 @@ export default function RoomsPage() {
             ))}
           </div>
         ) : (
-          <div className="mt-14 rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-12 text-center">
+          <div className="mt-14 rounded-4xl border border-emerald-900/30 bg-white/3 p-12 text-center">
             <h2 className="text-3xl font-black text-white">No rooms found</h2>
 
             <p className="mt-3 text-slate-400">
