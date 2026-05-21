@@ -1,17 +1,15 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 
-export default function GoogleButton({
-  text = "Continue with Google",
-}) {
-  const handleGoogleLogin = async () => {
+const AUTH_URL =
+  process.env.NEXT_PUBLIC_AUTH_URL ||
+  "https://studynook-server-2.onrender.com";
+
+export default function GoogleButton({ text = "Continue with Google" }) {
+  const handleGoogleLogin = () => {
     try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/dashboard",
-      });
+      window.location.href = `${AUTH_URL}/api/auth/sign-in/social?provider=google&callbackURL=https://studynook-eight.vercel.app/dashboard`;
     } catch (error) {
       console.error(error);
       toast.error("Google login failed");
@@ -27,7 +25,6 @@ export default function GoogleButton({
       <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black text-xs font-bold text-white">
         G
       </span>
-
       {text}
     </button>
   );
