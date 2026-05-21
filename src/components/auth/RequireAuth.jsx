@@ -9,7 +9,7 @@ export default function RequireAuth({ children }) {
   const { data: session, isPending } = authClient.useSession();
 
   useEffect(() => {
-    if (!isPending && !session) {
+    if (!isPending && !session?.user) {
       router.replace("/login");
     }
   }, [isPending, session, router]);
@@ -22,9 +22,9 @@ export default function RequireAuth({ children }) {
     );
   }
 
-  if (!session) {
+  if (!session?.user) {
     return null;
   }
 
-  return <>{children}</>;
+  return children;
 }

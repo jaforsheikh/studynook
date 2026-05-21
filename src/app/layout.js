@@ -1,24 +1,19 @@
-import "./globals.css";
-import { Toaster } from "sonner";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
+import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
+import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
+import RequireAuth from "@/components/auth/RequireAuth";
 
-export const metadata = {
-  title: "StudyNook",
-  description: "Premium Study Room Booking Platform",
-};
-
-export default function RootLayout({ children }) {
+export default function DashboardLayout({ children }) {
   return (
-    <html lang="en">
-      <body className="bg-[#06110e] text-white">
-        <Navbar />
+    <RequireAuth>
+      <div className="flex min-h-screen bg-[#06110e] text-white">
+        <DashboardSidebar />
 
-        {children}
+        <div className="min-w-0 flex-1">
+          <DashboardTopbar />
 
-        <Footer />
-        <Toaster position="top-right" richColors closeButton />
-      </body>
-    </html>
+          <main className="p-4 sm:p-6 lg:p-8">{children}</main>
+        </div>
+      </div>
+    </RequireAuth>
   );
 }
