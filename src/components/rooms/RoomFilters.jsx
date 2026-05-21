@@ -13,7 +13,6 @@ export default function RoomFilters({
   return (
     <div className="rounded-[28px] border border-emerald-900/30 bg-white/[0.03] p-5 backdrop-blur-xl">
       <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr_1fr]">
-        
         <div className="flex items-center gap-3 rounded-2xl bg-[#06110e] px-4 py-4">
           <Search className="h-5 w-5 text-emerald-400" />
 
@@ -56,8 +55,8 @@ export default function RoomFilters({
             className="w-full cursor-pointer bg-[#06110e] text-sm text-white outline-none"
           >
             <option value="">Any Capacity</option>
-            <option value="1">1 Person</option>
-            <option value="2-4">2-4 People</option>
+            <option value="1">1+ Person</option>
+            <option value="2">2+ People</option>
             <option value="5">5+ People</option>
             <option value="10">10+ People</option>
           </select>
