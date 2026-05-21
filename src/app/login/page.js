@@ -15,30 +15,36 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
 
     try {
       const res = await authClient.signIn.email({
         email,
         password,
+        callbackURL: "/dashboard",
       });
 
       if (res?.error) {
         toast.error(res.error.message || "Invalid email or password.");
+        setIsSubmitting(false);
         return;
       }
 
       toast.success("Login successful.");
 
-      setTimeout(() => {
-        router.push("/dashboard");
-        router.refresh();
-      }, 500);
+      router.replace("/dashboard");
+      router.refresh();
     } catch (error) {
       console.log(error);
       toast.error("Invalid email or password.");
+      setIsSubmitting(false);
     }
   };
 
@@ -123,9 +129,10 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-6 py-4 text-sm font-black text-slate-950 transition hover:bg-amber-300"
+            disabled={isSubmitting}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-6 py-4 text-sm font-black text-slate-950 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Login to StudyNook
+            {isSubmitting ? "Logging in..." : "Login to StudyNook"}
             <ArrowRight className="h-5 w-5" />
           </button>
         </form>
