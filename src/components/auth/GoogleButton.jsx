@@ -1,17 +1,19 @@
 "use client";
 
 import { FcGoogle } from "react-icons/fc";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://studynook-server-2.onrender.com";
-
-export default function GoogleButton() {
+export default function GoogleButton({ text = "Continue with Google" }) {
   const handleGoogleLogin = async () => {
     try {
-      window.location.href = `${API_URL}/api/auth/sign-in/social?provider=google`;
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/dashboard",
+      });
     } catch (error) {
-      console.error("Google login failed:", error);
+      console.log(error);
+      toast.error("Google login failed.");
     }
   };
 
@@ -19,10 +21,10 @@ export default function GoogleButton() {
     <button
       type="button"
       onClick={handleGoogleLogin}
-      className="w-full flex items-center justify-center gap-3 rounded-2xl bg-white py-4 font-semibold text-black transition hover:bg-gray-100"
+      className="flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-6 py-4 text-sm font-black text-slate-950 transition hover:bg-slate-100"
     >
       <FcGoogle className="text-2xl" />
-      Continue with Google
+      {text}
     </button>
   );
 }
