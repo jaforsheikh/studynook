@@ -4,14 +4,15 @@ import { authClient } from "@/lib/auth-client";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 
-export default function GoogleButton({
-  text = "Continue with Google",
-}) {
+const APP_URL =
+  process.env.NEXT_PUBLIC_APP_URL || "https://studynook-eight.vercel.app";
+
+export default function GoogleButton({ text = "Continue with Google" }) {
   const handleGoogle = async () => {
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/dashboard",
+        callbackURL: `${APP_URL}/dashboard`,
       });
     } catch (error) {
       console.log(error);

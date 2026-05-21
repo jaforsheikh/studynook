@@ -8,7 +8,7 @@ import { authClient } from "@/lib/auth-client";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://studynook-server-2.onrender.com";
+  "https://studynook-server-beta.vercel.app";
 
 const timeSlots = [
   "08:00 AM",
@@ -47,12 +47,13 @@ export default function BookingCalendar({ room }) {
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("2026");
   const [selectedSlots, setSelectedSlots] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const selectedDate = day && month && year ? `${year}-${month}-${day}` : "";
 
   const totalPrice = useMemo(() => {
-    return selectedSlots.length * Number(room.price || 0);
-  }, [selectedSlots, room.price]);
+    return selectedSlots.length * Number(room?.price || 0);
+  }, [selectedSlots, room?.price]);
 
   const toggleSlot = (slot) => {
     setSelectedSlots((prev) =>
@@ -63,6 +64,8 @@ export default function BookingCalendar({ room }) {
   };
 
   const handleBooking = async () => {
+    if (isSubmitting) return;
+
     if (!session?.user) {
       toast.error("Please login first to book this room.");
       router.push("/login");
@@ -79,15 +82,17 @@ export default function BookingCalendar({ room }) {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       const bookingData = {
-        roomId: room.id || room._id || room.slug,
-        roomName: room.title || room.name,
+        roomId: room?._id || room?.id || room?.slug,
+        roomName: room?.name || room?.title || "Study Room",
         bookingDate: selectedDate,
         slots: selectedSlots,
         totalPrice,
         userEmail: session.user.email,
-        userName: session.user.name,
+        userName: session.user.name || session.user.email,
       };
 
       const res = await fetch(`${API_BASE_URL}/api/bookings`, {
@@ -101,22 +106,22 @@ export default function BookingCalendar({ room }) {
 
       const data = await res.json();
 
-      if (!res.ok) {
+      if (!res.ok || !data.success) {
         toast.error(data.message || "Booking failed.");
+        setIsSubmitting(false);
         return;
       }
 
-      if (data.success) {
-        toast.success("Booking confirmed successfully!");
-        setDay("");
-        setMonth("");
-        setSelectedSlots([]);
-      } else {
-        toast.error(data.message || "Booking failed.");
-      }
+      toast.success("Booking confirmed successfully!");
+      setDay("");
+      setMonth("");
+      setSelectedSlots([]);
+      router.push("/dashboard/bookings");
+      router.refresh();
     } catch (error) {
-      console.log(error);
+      console.log("Booking error:", error);
       toast.error("Something went wrong.");
+      setIsSubmitting(false);
     }
   };
 
@@ -143,7 +148,6 @@ export default function BookingCalendar({ room }) {
               <option value="">Day</option>
               {Array.from({ length: 31 }, (_, i) => {
                 const value = String(i + 1).padStart(2, "0");
-
                 return (
                   <option key={value} value={value}>
                     {value}
@@ -158,7 +162,6 @@ export default function BookingCalendar({ room }) {
               className="h-16 rounded-2xl border border-emerald-900/40 bg-[#02110d] px-5 text-white outline-none"
             >
               <option value="">Month</option>
-
               {months.map((item) => (
                 <option key={item.value} value={item.value}>
                   {item.label}
@@ -213,10 +216,10 @@ export default function BookingCalendar({ room }) {
         <h2 className="text-4xl font-black text-white">Booking Summary</h2>
 
         <div className="mt-10 space-y-6">
-          <SummaryRow label="Room" value={room.title || room.name} />
+          <SummaryRow label="Room" value={room?.name || room?.title || "Study Room"} />
           <SummaryRow label="Date" value={selectedDate || "Not selected"} />
           <SummaryRow label="Selected Slots" value={selectedSlots.length} />
-          <SummaryRow label="Hourly Price" value={`৳${room.price}`} />
+          <SummaryRow label="Hourly Price" value={`৳${room?.price || 0}`} />
         </div>
 
         <div className="mt-10 rounded-[28px] bg-[#02110d] p-8">
@@ -230,9 +233,10 @@ export default function BookingCalendar({ room }) {
         <button
           type="button"
           onClick={handleBooking}
-          className="mt-10 flex h-20 w-full items-center justify-center rounded-[24px] bg-amber-400 text-2xl font-black text-black transition hover:bg-amber-300"
+          disabled={!selectedDate || selectedSlots.length === 0 || isSubmitting}
+          className="mt-10 flex h-20 w-full items-center justify-center rounded-[24px] bg-amber-400 text-2xl font-black text-black transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
         >
-          Confirm Booking
+          {isSubmitting ? "Confirming..." : "Confirm Booking"}
         </button>
 
         <p className="mt-6 text-center text-lg text-slate-500">
