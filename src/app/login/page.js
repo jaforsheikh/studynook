@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import GoogleButton from "@/components/auth/GoogleButton";
 import { authClient } from "@/lib/auth-client";
@@ -11,18 +10,9 @@ import { ArrowRight, LockKeyhole, Mail } from "lucide-react";
 import { toast } from "sonner";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { data: session, isPending } = authClient.useSession();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-useEffect(() => {
-  if (!isPending && session?.user) {
-    window.location.replace("/dashboard");
-  }
-}, [isPending, session]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -45,7 +35,6 @@ useEffect(() => {
       }
 
       toast.success("Login successful.");
-
       window.location.href = "/dashboard";
     } catch (error) {
       console.log(error);
@@ -53,20 +42,6 @@ useEffect(() => {
       setIsSubmitting(false);
     }
   };
-
-  if (isPending || session?.user) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-[#06110e] text-white">
-        <div className="text-center">
-          <div className="mx-auto h-14 w-14 animate-spin rounded-full border-4 border-emerald-900 border-t-emerald-400" />
-          <h2 className="mt-6 text-2xl font-black">Checking Authentication...</h2>
-          <p className="mt-2 text-sm text-slate-400">
-            Redirecting you to dashboard.
-          </p>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#06110e] px-4 py-20">
@@ -112,18 +87,9 @@ useEffect(() => {
           </div>
 
           <div>
-            <div className="mb-2 flex items-center justify-between">
-              <label className="text-sm font-semibold text-slate-300">
-                Password
-              </label>
-
-              <Link
-                href="/forgot-password"
-                className="text-xs font-semibold text-emerald-300 hover:text-emerald-200"
-              >
-                Forgot Password?
-              </Link>
-            </div>
+            <label className="mb-2 block text-sm font-semibold text-slate-300">
+              Password
+            </label>
 
             <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/40 bg-[#06110e] px-4 py-4">
               <LockKeyhole className="h-5 w-5 text-emerald-400" />
@@ -151,11 +117,9 @@ useEffect(() => {
 
         <div className="my-6 flex items-center gap-4">
           <div className="h-px flex-1 bg-emerald-900/40" />
-
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
             Or
           </span>
-
           <div className="h-px flex-1 bg-emerald-900/40" />
         </div>
 
