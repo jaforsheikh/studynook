@@ -17,7 +17,12 @@ export default function RequireAuth({ children }) {
   if (isPending) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#06110e] text-white">
-        <p className="text-slate-400">Loading...</p>
+        <div className="text-center">
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-emerald-900 border-t-emerald-400" />
+          <p className="mt-4 text-sm text-slate-400">
+            Checking authentication...
+          </p>
+        </div>
       </div>
     );
   }

@@ -19,11 +19,18 @@ export default function LoginPage() {
 
     if (isSubmitting) return;
 
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!cleanEmail || !password) {
+      toast.error("Please enter email and password.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const res = await authClient.signIn.email({
-        email,
+        email: cleanEmail,
         password,
         callbackURL: "/dashboard",
       });
@@ -117,9 +124,11 @@ export default function LoginPage() {
 
         <div className="my-6 flex items-center gap-4">
           <div className="h-px flex-1 bg-emerald-900/40" />
+
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
             Or
           </span>
+
           <div className="h-px flex-1 bg-emerald-900/40" />
         </div>
 

@@ -22,17 +22,15 @@ const navLinks = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
 
   const isLoggedIn = Boolean(session?.user);
 
   const handleLogout = async () => {
     try {
       await authClient.signOut();
-
       setOpen(false);
       toast.success("Logged out successfully.");
-
       window.location.href = "/login";
     } catch (error) {
       console.log(error);
@@ -79,7 +77,7 @@ export default function Navbar() {
             Search
           </Link>
 
-          {isLoggedIn ? (
+          {!isPending && isLoggedIn ? (
             <>
               <Link
                 href="/dashboard"
@@ -90,6 +88,7 @@ export default function Navbar() {
               </Link>
 
               <button
+                type="button"
                 onClick={handleLogout}
                 className="inline-flex items-center gap-2 rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-3 text-sm font-bold text-red-300 transition hover:bg-red-500/20"
               >
@@ -98,17 +97,20 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-2 rounded-2xl bg-amber-400 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-amber-300"
-            >
-              <UserRound className="h-4 w-4" />
-              Login
-            </Link>
+            !isPending && (
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 rounded-2xl bg-amber-400 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-amber-300"
+              >
+                <UserRound className="h-4 w-4" />
+                Login
+              </Link>
+            )
           )}
         </div>
 
         <button
+          type="button"
           onClick={() => setOpen(!open)}
           className="grid h-11 w-11 place-items-center rounded-2xl border border-emerald-900/40 bg-white/[0.03] text-white lg:hidden"
         >
@@ -139,7 +141,7 @@ export default function Navbar() {
               Search Rooms
             </Link>
 
-            {isLoggedIn ? (
+            {!isPending && isLoggedIn ? (
               <>
                 <Link
                   href="/dashboard"
@@ -151,6 +153,7 @@ export default function Navbar() {
                 </Link>
 
                 <button
+                  type="button"
                   onClick={handleLogout}
                   className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm font-black text-red-300"
                 >
@@ -159,14 +162,16 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <Link
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="mt-4 flex items-center justify-center gap-2 rounded-2xl bg-amber-400 px-5 py-4 text-sm font-black text-slate-950"
-              >
-                <UserRound className="h-4 w-4" />
-                Login
-              </Link>
+              !isPending && (
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="mt-4 flex items-center justify-center gap-2 rounded-2xl bg-amber-400 px-5 py-4 text-sm font-black text-slate-950"
+                >
+                  <UserRound className="h-4 w-4" />
+                  Login
+                </Link>
+              )
             )}
           </div>
         </div>
