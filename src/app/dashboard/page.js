@@ -11,7 +11,7 @@ import {
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://studynook-server-2.onrender.com";
+  "https://studynook-server-beta.vercel.app";
 
 export default function DashboardPage() {
   const { data: session, isPending } = authClient.useSession();

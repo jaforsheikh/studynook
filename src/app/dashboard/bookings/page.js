@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://studynook-server-2.onrender.com";
+  "https://studynook-server-beta.vercel.app";
 
 export default function MyBookingsPage() {
   const { data: session, isPending } = authClient.useSession();
