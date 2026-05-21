@@ -1,34 +1,30 @@
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://studynook-server-2.onrender.com";
+  "https://studynook-server-beta.vercel.app";
 
 const API_URL = `${API_BASE_URL}/api`;
 
-/*
-GET ALL ROOMS
-*/
+
 export const getRooms = async () => {
   const res = await fetch(`${API_URL}/rooms`, {
+    cache: "no-store",
     credentials: "include",
   });
 
   return res.json();
 };
 
-/*
-GET SINGLE ROOM
-*/
+
 export const getRoomById = async (id) => {
   const res = await fetch(`${API_URL}/rooms/${id}`, {
+    cache: "no-store",
     credentials: "include",
   });
 
   return res.json();
 };
 
-/*
-CREATE ROOM
-*/
+
 export const createRoom = async (roomData) => {
   const res = await fetch(`${API_URL}/rooms`, {
     method: "POST",
@@ -42,9 +38,7 @@ export const createRoom = async (roomData) => {
   return res.json();
 };
 
-/*
-UPDATE ROOM
-*/
+
 export const updateRoom = async (id, roomData) => {
   const res = await fetch(`${API_URL}/rooms/${id}`, {
     method: "PATCH",
@@ -58,9 +52,7 @@ export const updateRoom = async (id, roomData) => {
   return res.json();
 };
 
-/*
-DELETE ROOM
-*/
+
 export const deleteRoom = async (id) => {
   const res = await fetch(`${API_URL}/rooms/${id}`, {
     method: "DELETE",
@@ -70,11 +62,10 @@ export const deleteRoom = async (id) => {
   return res.json();
 };
 
-/*
-GET MY LISTINGS
-*/
+
 export const getMyListings = async (email) => {
   const res = await fetch(`${API_URL}/rooms/my-listings/${email}`, {
+    cache: "no-store",
     credentials: "include",
   });
 
