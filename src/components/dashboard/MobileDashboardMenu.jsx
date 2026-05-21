@@ -13,32 +13,38 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 
 const navItems = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { label: "My Bookings", href: "/dashboard/bookings", icon: CalendarCheck },
   { label: "My Listings", href: "/dashboard/my-listings", icon: Building2 },
-  { label: "Add Room", href: "/dashboard/rooms/new", icon: PlusCircle },
+  { label: "Add Room", href: "/dashboard/add-room", icon: PlusCircle },
   { label: "Admin", href: "/dashboard/admin", icon: ShieldCheck },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 export default function MobileDashboardMenu() {
   const [open, setOpen] = useState(false);
-  const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem("studynook-user");
-    toast.success("Logged out successfully");
-    setOpen(false);
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      await authClient.signOut();
+
+      setOpen(false);
+      toast.success("Logged out successfully.");
+      window.location.href = "/login";
+    } catch (error) {
+      console.log(error);
+      toast.error("Logout failed.");
+    }
   };
 
   return (
     <>
       <button
+        type="button"
         onClick={() => setOpen(true)}
         className="grid h-11 w-11 place-items-center rounded-2xl border border-emerald-900/30 bg-white/[0.03] text-slate-300 lg:hidden"
       >
@@ -48,13 +54,18 @@ export default function MobileDashboardMenu() {
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <button
+            type="button"
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
           />
 
           <aside className="relative z-10 h-full w-[86%] max-w-sm border-r border-emerald-900/30 bg-[#06110e] p-6 shadow-2xl">
             <div className="flex items-center justify-between">
-              <Link href="/" className="flex items-center gap-3">
+              <Link
+                href="/"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3"
+              >
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-xl font-black text-white">
                   S
                 </div>
@@ -66,6 +77,7 @@ export default function MobileDashboardMenu() {
               </Link>
 
               <button
+                type="button"
                 onClick={() => setOpen(false)}
                 className="grid h-10 w-10 place-items-center rounded-2xl border border-emerald-900/30 bg-white/[0.03] text-slate-300"
               >
@@ -92,6 +104,7 @@ export default function MobileDashboardMenu() {
             </nav>
 
             <button
+              type="button"
               onClick={handleLogout}
               className="mt-10 flex w-full items-center gap-3 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
             >

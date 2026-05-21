@@ -1,13 +1,11 @@
 "use client";
 
 import { Bell, LogOut, Search } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import MobileDashboardMenu from "./MobileDashboardMenu";
 
 export default function DashboardTopbar() {
-  const router = useRouter();
   const { data: session } = authClient.useSession();
 
   const handleLogout = async () => {
@@ -15,8 +13,7 @@ export default function DashboardTopbar() {
       await authClient.signOut();
 
       toast.success("Logged out successfully.");
-      router.push("/login");
-      router.refresh();
+      window.location.href = "/login";
     } catch (error) {
       console.log(error);
       toast.error("Logout failed.");
@@ -47,11 +44,15 @@ export default function DashboardTopbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="grid h-11 w-11 place-items-center rounded-2xl border border-emerald-900/30 bg-white/[0.03] text-slate-300">
+          <button
+            type="button"
+            className="grid h-11 w-11 place-items-center rounded-2xl border border-emerald-900/30 bg-white/[0.03] text-slate-300"
+          >
             <Bell className="h-5 w-5" />
           </button>
 
           <button
+            type="button"
             onClick={handleLogout}
             className="hidden items-center gap-2 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300 transition hover:bg-red-500/20 sm:flex"
           >
