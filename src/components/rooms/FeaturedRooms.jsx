@@ -3,45 +3,38 @@
 import { useEffect, useState } from "react";
 import RoomCard from "@/components/rooms/RoomCard";
 import EmptyState from "@/components/shared/EmptyState";
-import { toast } from "sonner";
+import { featuredRooms as staticFeaturedRooms } from "@/data/rooms";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://studynook-server-2.onrender.com";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://studynook-server-beta.vercel.app";
 
 export default function FeaturedRooms() {
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState(staticFeaturedRooms || []);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLatestRooms = async () => {
+    const fetchFeaturedRooms = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/rooms/latest`, {
-          credentials: "include",
+        const res = await fetch(`${API_URL}/api/rooms/latest`, {
           cache: "no-store",
         });
 
         const data = await res.json();
 
-        if (!res.ok) {
-          toast.error(data?.message || "Failed to load featured rooms.");
-          return;
-        }
-
-        if (data.success) {
-          setRooms(data.rooms || []);
+        if (data?.success && Array.isArray(data.rooms) && data.rooms.length > 0) {
+          setRooms(data.rooms);
         } else {
-          toast.error(data.message || "Failed to load featured rooms.");
+          setRooms(staticFeaturedRooms || []);
         }
       } catch (error) {
-        console.log("Featured rooms error:", error);
-        toast.error("Failed to load featured rooms.");
+        console.log("Featured rooms API error:", error);
+        setRooms(staticFeaturedRooms || []);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchLatestRooms();
+    fetchFeaturedRooms();
   }, []);
 
   return (
@@ -52,13 +45,12 @@ export default function FeaturedRooms() {
             Featured Rooms
           </span>
 
-          <h2 className="mt-6 text-5xl font-black tracking-tight text-white">
+          <h2 className="mt-6 text-4xl font-black tracking-tight text-white sm:text-5xl">
             Popular Study Spaces
           </h2>
 
           <p className="mt-5 text-lg leading-8 text-slate-400">
-            Explore recently listed study rooms from MongoDB with real-time
-            booking-ready data.
+            Explore popular study rooms with booking-ready space details.
           </p>
         </div>
 
@@ -70,7 +62,7 @@ export default function FeaturedRooms() {
           <div className="mt-14">
             <EmptyState
               title="No featured rooms yet"
-              description="No study rooms have been added yet. Add your first room from the dashboard."
+              description="No study rooms have been added yet."
               actionText="Add Room"
               actionHref="/dashboard/add-room"
             />
@@ -78,7 +70,7 @@ export default function FeaturedRooms() {
         ) : (
           <div className="mt-14 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
             {rooms.map((room) => (
-              <RoomCard key={room._id} room={room} />
+              <RoomCard key={room._id || room.id || room.slug} room={room} />
             ))}
           </div>
         )}

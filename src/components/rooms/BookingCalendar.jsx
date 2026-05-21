@@ -1,7 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, Clock, CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { CalendarDays, CheckCircle2, Clock } from "lucide-react";
+import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://studynook-server-beta.vercel.app";
 
 const timeSlots = [
   "08:00 AM",
@@ -17,19 +24,23 @@ const timeSlots = [
   "06:00 PM",
 ];
 
-const bookedSlots = ["10:00 AM", "03:00 PM"];
-
 export default function BookingCalendar({ room }) {
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+
   const [date, setDate] = useState("");
   const [selectedSlots, setSelectedSlots] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const roomId = room?._id || room?.id || room?.slug;
+  const roomName = room?.name || room?.title || "Study Room";
+  const hourlyPrice = Number(room?.price || 0);
 
   const totalPrice = useMemo(() => {
-    return selectedSlots.length * room.price;
-  }, [selectedSlots, room.price]);
+    return selectedSlots.length * hourlyPrice;
+  }, [selectedSlots, hourlyPrice]);
 
   const handleSlotClick = (slot) => {
-    if (bookedSlots.includes(slot)) return;
-
     setSelectedSlots((prev) =>
       prev.includes(slot)
         ? prev.filter((item) => item !== slot)
@@ -37,13 +48,76 @@ export default function BookingCalendar({ room }) {
     );
   };
 
+  const handleBooking = async () => {
+    if (!session?.user) {
+      toast.error("Please login first to book this room.");
+      router.push("/login");
+      return;
+    }
+
+    if (!date) {
+      toast.error("Please select booking date.");
+      return;
+    }
+
+    if (selectedSlots.length === 0) {
+      toast.error("Please select at least one time slot.");
+      return;
+    }
+
+    if (!roomId) {
+      toast.error("Room information is missing.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const bookingData = {
+        roomId,
+        roomName,
+        bookingDate: date,
+        slots: selectedSlots,
+        totalPrice,
+        userEmail: session.user.email,
+        userName: session.user.name,
+        status: "confirmed",
+      };
+
+      const res = await fetch(`${API_URL}/api/bookings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(bookingData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        toast.error(data.message || "Booking failed.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      toast.success("Booking confirmed successfully!");
+      setDate("");
+      setSelectedSlots([]);
+      router.push("/dashboard/bookings");
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong.");
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="rounded-[32px] border border-emerald-900/40 bg-white/[0.03] p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
       <h3 className="text-2xl font-black text-white">Book This Room</h3>
 
       <p className="mt-2 text-sm text-slate-400">
-        Select date and hourly slots. Backend will later verify real-time
-        availability.
+        Select date and hourly slots. Your booking will be saved to MongoDB.
       </p>
 
       <label className="mt-6 block">
@@ -55,11 +129,11 @@ export default function BookingCalendar({ room }) {
           <CalendarDays className="h-5 w-5 text-emerald-400" />
 
           <input
-  type="date"
-  value={date}
-  onChange={(e) => setDate(e.target.value)}
-  className="w-full bg-transparent text-sm text-white outline-none [color-scheme:dark]"
-/>
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="w-full bg-transparent text-sm text-white outline-none [color-scheme:dark]"
+          />
         </div>
       </label>
 
@@ -71,19 +145,15 @@ export default function BookingCalendar({ room }) {
 
         <div className="grid grid-cols-2 gap-3">
           {timeSlots.map((slot) => {
-            const isBooked = bookedSlots.includes(slot);
             const isSelected = selectedSlots.includes(slot);
 
             return (
               <button
                 key={slot}
                 type="button"
-                disabled={isBooked}
                 onClick={() => handleSlotClick(slot)}
                 className={`rounded-2xl border px-4 py-3 text-sm font-bold transition ${
-                  isBooked
-                    ? "cursor-not-allowed border-red-500/20 bg-red-500/10 text-red-300"
-                    : isSelected
+                  isSelected
                     ? "border-emerald-500 bg-emerald-500 text-white"
                     : "border-emerald-900/40 bg-[#06110e] text-slate-300 hover:border-emerald-600 hover:text-white"
                 }`}
@@ -103,7 +173,7 @@ export default function BookingCalendar({ room }) {
 
         <div className="mt-3 flex items-center justify-between">
           <span className="text-sm text-slate-400">Hourly Price</span>
-          <span className="font-bold text-amber-400">৳{room.price}</span>
+          <span className="font-bold text-amber-400">৳{hourlyPrice}</span>
         </div>
 
         <div className="mt-3 flex items-center justify-between border-t border-emerald-900/40 pt-3">
@@ -115,11 +185,13 @@ export default function BookingCalendar({ room }) {
       </div>
 
       <button
-        disabled={!date || selectedSlots.length === 0}
+        type="button"
+        onClick={handleBooking}
+        disabled={!date || selectedSlots.length === 0 || isSubmitting}
         className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-6 py-4 text-sm font-black text-slate-950 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
       >
         <CheckCircle2 className="h-5 w-5" />
-        Continue Booking
+        {isSubmitting ? "Confirming..." : "Confirm Booking"}
       </button>
     </div>
   );
