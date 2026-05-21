@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import RoomCard from "@/components/rooms/RoomCard";
 import EmptyState from "@/components/shared/EmptyState";
-import { featuredRooms as staticFeaturedRooms } from "@/data/rooms";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://studynook-server-beta.vercel.app";
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://studynook-server-beta.vercel.app";
 
 export default function FeaturedRooms() {
-  const [rooms, setRooms] = useState(staticFeaturedRooms || []);
+  const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,14 +22,11 @@ export default function FeaturedRooms() {
 
         const data = await res.json();
 
-        if (data?.success && Array.isArray(data.rooms) && data.rooms.length > 0) {
-          setRooms(data.rooms);
-        } else {
-          setRooms(staticFeaturedRooms || []);
+        if (data?.success) {
+          setRooms(data.rooms || []);
         }
       } catch (error) {
-        console.log("Featured rooms API error:", error);
-        setRooms(staticFeaturedRooms || []);
+        console.log("Featured rooms fetch error:", error);
       } finally {
         setLoading(false);
       }
@@ -50,13 +48,16 @@ export default function FeaturedRooms() {
           </h2>
 
           <p className="mt-5 text-lg leading-8 text-slate-400">
-            Explore popular study rooms with booking-ready space details.
+            Explore premium study environments designed for focus,
+            collaboration, and productivity.
           </p>
         </div>
 
         {loading ? (
           <div className="mt-14 rounded-[32px] border border-emerald-900/30 bg-white/[0.03] p-10">
-            <p className="text-slate-400">Loading featured rooms...</p>
+            <p className="text-slate-400">
+              Loading featured rooms...
+            </p>
           </div>
         ) : rooms.length === 0 ? (
           <div className="mt-14">
@@ -64,13 +65,16 @@ export default function FeaturedRooms() {
               title="No featured rooms yet"
               description="No study rooms have been added yet."
               actionText="Add Room"
-              actionHref="/dashboard/add-room"
+              actionHref="/dashboard/rooms/new"
             />
           </div>
         ) : (
           <div className="mt-14 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
             {rooms.map((room) => (
-              <RoomCard key={room._id || room.id || room.slug} room={room} />
+              <RoomCard
+                key={room._id || room.slug}
+                room={room}
+              />
             ))}
           </div>
         )}
