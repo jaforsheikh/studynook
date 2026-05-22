@@ -8,6 +8,7 @@ import {
   LogOut,
   Menu,
   Search,
+  UserPlus,
   UserRound,
   X,
 } from "lucide-react";
@@ -15,6 +16,7 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 
 const navLinks = [
+  { label: "Home", href: "/" },
   { label: "Study Rooms", href: "/rooms" },
   { label: "How It Works", href: "/#how-it-works" },
   { label: "List Your Room", href: "/become-host" },
@@ -56,7 +58,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <div className="hidden items-center gap-8 lg:flex">
+        <div className="hidden items-center gap-7 lg:flex">
           {navLinks.map((item) => (
             <Link
               key={item.href}
@@ -71,7 +73,7 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             href="/rooms"
-            className="inline-flex items-center gap-2 rounded-2xl border border-emerald-900/40 bg-white/[0.03] px-5 py-3 text-sm font-bold text-slate-300 transition hover:border-emerald-600 hover:text-white"
+            className="inline-flex items-center gap-2 rounded-2xl border border-emerald-900/40 bg-white/[0.03] px-4 py-3 text-sm font-bold text-slate-300 transition hover:border-emerald-600 hover:text-white"
           >
             <Search className="h-4 w-4" />
             Search
@@ -98,13 +100,23 @@ export default function Navbar() {
             </>
           ) : (
             !isPending && (
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-2 rounded-2xl bg-amber-400 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-amber-300"
-              >
-                <UserRound className="h-4 w-4" />
-                Login
-              </Link>
+              <>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-amber-400/40 bg-amber-400/10 px-5 py-3 text-sm font-bold text-amber-300 transition hover:bg-amber-400/20"
+                >
+                  <UserRound className="h-4 w-4" />
+                  Login
+                </Link>
+
+                <Link
+                  href="/register"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-amber-400 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-amber-300"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  Register
+                </Link>
+              </>
             )
           )}
         </div>
@@ -163,14 +175,25 @@ export default function Navbar() {
               </>
             ) : (
               !isPending && (
-                <Link
-                  href="/login"
-                  onClick={() => setOpen(false)}
-                  className="mt-4 flex items-center justify-center gap-2 rounded-2xl bg-amber-400 px-5 py-4 text-sm font-black text-slate-950"
-                >
-                  <UserRound className="h-4 w-4" />
-                  Login
-                </Link>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <Link
+                    href="/login"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center justify-center gap-2 rounded-2xl border border-amber-400/40 bg-amber-400/10 px-4 py-4 text-sm font-bold text-amber-300"
+                  >
+                    <UserRound className="h-4 w-4" />
+                    Login
+                  </Link>
+
+                  <Link
+                    href="/register"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center justify-center gap-2 rounded-2xl bg-amber-400 px-4 py-4 text-sm font-black text-slate-950"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    Register
+                  </Link>
+                </div>
               )
             )}
           </div>
