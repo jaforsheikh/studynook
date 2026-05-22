@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📚 StudyNook – Library Room Booking Platform
 
-## Getting Started
+StudyNook is a modern library room booking platform where students can easily search, view, and reserve study rooms online.  
+This project focuses on providing a smooth booking experience with authentication, real-time availability checking, booking management, and responsive UI.
 
-First, run the development server:
+---
+
+# 🌐 Live Demo
+
+🔗 https://studynook-eight.vercel.app
+
+---
+
+# 🚀 Features
+
+## 👤 Authentication System
+- User Registration
+- User Login
+- JWT Authentication
+- Protected Routes
+- Persistent Login Session
+
+---
+
+## 🏠 Homepage
+- Hero Section
+- Featured Study Rooms
+- Popular Categories
+- Responsive Navigation Bar
+- Footer Section
+
+---
+
+## 📚 Room Management
+- View All Study Rooms
+- Room Details Page
+- Room Capacity Information
+- Amenities Display
+- Room Availability Status
+
+---
+
+## 📅 Booking System
+- Book Study Rooms
+- Date & Time Selection
+- Prevent Double Booking
+- Booking Confirmation
+- Booking History
+
+---
+
+## 👨‍💻 User Dashboard
+- View Personal Bookings
+- Cancel Bookings
+- Booking Status Tracking
+- User Profile Information
+
+---
+
+## 🔐 Security Features
+- JWT Token Verification
+- Protected API Routes
+- Secure Authentication
+- Input Validation
+- Error Handling
+
+---
+
+# 🛠️ Tech Stack
+
+## Frontend
+- Next.js
+- React.js
+- Tailwind CSS
+- React Icons
+- Axios
+
+---
+
+## Backend
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT
+
+---
+
+# 📂 Project Structure
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+studynook/
+│
+├── public/
+├── src/
+│   ├── app/
+│   ├── components/
+│   ├── pages/
+│   ├── hooks/
+│   ├── services/
+│   └── utils/
+│
+├── package.json
+├── next.config.mjs
+└── README.md
