@@ -2,7 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, CheckCircle2, Clock } from "lucide-react";
+import {
+  CalendarDays,
+  CheckCircle2,
+  Clock,
+  Loader2,
+  ShieldCheck,
+} from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
@@ -36,9 +42,12 @@ export default function BookingCalendar({ room }) {
   const roomName = room?.name || room?.title || "Study Room";
   const hourlyPrice = Number(room?.price || 0);
 
-  const totalPrice = useMemo(() => {
-    return selectedSlots.length * hourlyPrice;
-  }, [selectedSlots, hourlyPrice]);
+  const totalPrice = useMemo(
+    () => selectedSlots.length * hourlyPrice,
+    [selectedSlots, hourlyPrice]
+  );
+
+  const canBook = date && selectedSlots.length > 0 && !isSubmitting;
 
   const handleSlotClick = (slot) => {
     setSelectedSlots((prev) =>
@@ -113,37 +122,48 @@ export default function BookingCalendar({ room }) {
   };
 
   return (
-    <div className="rounded-4xl border border-emerald-900/40 bg-white/3 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
-      <h3 className="text-2xl font-black text-white">Book This Room</h3>
+    <div className="overflow-hidden rounded-[34px] border border-emerald-500/10 bg-[#071713]/95 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-7">
+      <div className="mb-7 flex items-start justify-between gap-4">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-300">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            Secure
+          </span>
 
-      <p className="mt-2 text-sm text-slate-400">
-        Select date and hourly slots. Your booking will be saved to MongoDB.
-      </p>
+          <h3 className="mt-4 text-3xl font-black leading-[0.95] tracking-[-0.04em] text-white">
+            Select Time Slots
+          </h3>
 
-      <label className="mt-6 block">
-        <span className="mb-2 block text-sm font-semibold text-slate-300">
+          <p className="mt-3 max-w-xs text-sm leading-6 text-slate-400">
+            Choose a date and one or more hourly slots for your booking.
+          </p>
+        </div>
+      </div>
+
+      <label className="block">
+        <span className="mb-3 block text-sm font-black text-white">
           Booking Date
         </span>
 
-        <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/40 bg-[#06110e] px-4 py-4">
-          <CalendarDays className="h-5 w-5 text-emerald-400" />
+        <div className="flex items-center gap-3 rounded-[22px] border border-emerald-500/10 bg-[#03100d] px-4 py-4 transition focus-within:border-emerald-400/40">
+          <CalendarDays className="h-5 w-5 shrink-0 text-emerald-400" />
 
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full bg-transparent text-sm text-white outline-none [color-scheme:dark]"
+            className="w-full bg-transparent text-sm font-bold text-white outline-none [color-scheme:dark]"
           />
         </div>
       </label>
 
-      <div className="mt-6">
-        <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-300">
+      <div className="mt-7">
+        <div className="mb-4 flex items-center gap-2 text-sm font-black text-white">
           <Clock className="h-4 w-4 text-emerald-400" />
           Available Time Slots
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-2">
           {timeSlots.map((slot) => {
             const isSelected = selectedSlots.includes(slot);
 
@@ -152,10 +172,10 @@ export default function BookingCalendar({ room }) {
                 key={slot}
                 type="button"
                 onClick={() => handleSlotClick(slot)}
-                className={`rounded-2xl border px-4 py-3 text-sm font-bold transition ${
+                className={`min-h-[50px] rounded-2xl border px-3 text-sm font-black transition ${
                   isSelected
-                    ? "border-emerald-500 bg-emerald-500 text-white"
-                    : "border-emerald-900/40 bg-[#06110e] text-slate-300 hover:border-emerald-600 hover:text-white"
+                    ? "border-emerald-300 bg-emerald-400 text-[#03100d] shadow-lg shadow-emerald-950/30"
+                    : "border-emerald-500/10 bg-[#03100d] text-slate-200 hover:-translate-y-0.5 hover:border-emerald-400/35 hover:text-white"
                 }`}
               >
                 {slot}
@@ -165,34 +185,53 @@ export default function BookingCalendar({ room }) {
         </div>
       </div>
 
-      <div className="mt-8 rounded-3xl border border-emerald-900/40 bg-[#06110e] p-5">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-slate-400">Selected Slots</span>
-          <span className="font-bold text-white">{selectedSlots.length}</span>
-        </div>
+      <div className="mt-7 rounded-[26px] border border-emerald-500/10 bg-[#03100d] p-5">
+        <SummaryRow label="Room" value={roomName} />
+        <SummaryRow label="Date" value={date || "Not selected"} />
+        <SummaryRow label="Selected Slots" value={selectedSlots.length} />
+        <SummaryRow label="Hourly Price" value={`৳${hourlyPrice}`} />
 
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-sm text-slate-400">Hourly Price</span>
-          <span className="font-bold text-amber-400">৳{hourlyPrice}</span>
-        </div>
-
-        <div className="mt-3 flex items-center justify-between border-t border-emerald-900/40 pt-3">
-          <span className="text-sm font-bold text-white">Total</span>
-          <span className="text-2xl font-black text-amber-400">
+        <div className="mt-5 rounded-[22px] bg-[#020c09] p-5">
+          <p className="text-sm font-medium text-slate-400">Total</p>
+          <p className="mt-1 text-5xl font-black tracking-[-0.06em] text-amber-400">
             ৳{totalPrice}
-          </span>
+          </p>
         </div>
       </div>
 
       <button
         type="button"
         onClick={handleBooking}
-        disabled={!date || selectedSlots.length === 0 || isSubmitting}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-6 py-4 text-sm font-black text-slate-950 transition hover:bg-amber-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+        disabled={!canBook}
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-[22px] bg-amber-400 px-6 py-4 text-sm font-black text-slate-950 shadow-xl shadow-amber-950/20 transition hover:-translate-y-0.5 hover:bg-amber-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400 disabled:hover:translate-y-0"
       >
-        <CheckCircle2 className="h-5 w-5" />
-        {isSubmitting ? "Confirming..." : "Confirm Booking"}
+        {isSubmitting ? (
+          <>
+            <Loader2 className="h-5 w-5 animate-spin" />
+            Confirming...
+          </>
+        ) : (
+          <>
+            <CheckCircle2 className="h-5 w-5" />
+            Confirm Booking
+          </>
+        )}
       </button>
+
+      {!session?.user && (
+        <p className="mt-5 text-center text-sm leading-6 text-slate-500">
+          Login is required before booking confirmation.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function SummaryRow({ label, value }) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-b border-white/5 py-3 last:border-b-0">
+      <span className="text-sm font-medium text-slate-400">{label}</span>
+      <span className="text-right text-sm font-black text-white">{value}</span>
     </div>
   );
 }

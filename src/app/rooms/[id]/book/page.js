@@ -54,9 +54,11 @@ export default function BookRoomPage() {
 
   if (isPending || loading) {
     return (
-      <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
-        <div className="mx-auto max-w-7xl rounded-4xl border border-emerald-900/30 bg-white/3 p-10">
-          <p className="text-slate-400">Loading booking page...</p>
+      <main className="min-h-screen bg-[#04100d] px-4 py-24 text-white sm:px-6">
+        <div className="mx-auto max-w-7xl rounded-[32px] border border-emerald-500/10 bg-white/[0.03] p-8 shadow-2xl shadow-black/30">
+          <p className="text-sm font-medium text-slate-400">
+            Loading booking page...
+          </p>
         </div>
       </main>
     );
@@ -64,7 +66,7 @@ export default function BookRoomPage() {
 
   if (!room) {
     return (
-      <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
+      <main className="min-h-screen bg-[#04100d] px-4 py-24 text-white sm:px-6">
         <div className="mx-auto max-w-7xl">
           <EmptyState
             title="Room not found"
@@ -75,71 +77,66 @@ export default function BookRoomPage() {
         </div>
       </main>
     );
-  } 
+  }
 
   const image = room.image || "/assets/rooms/quiet-pod.jpg";
 
   return (
-    <main className="min-h-screen bg-[#06110e] px-6 py-24 text-white">
+    <main className="min-h-screen overflow-hidden bg-[#04100d] px-4 py-24 text-white sm:px-6">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.14),transparent_35%),radial-gradient(circle_at_top_right,rgba(59,130,246,0.08),transparent_35%)]" />
+
       <div className="mx-auto max-w-7xl">
         <Link
           href={`/rooms/${id}`}
-          className="mb-10 inline-flex items-center gap-2 text-sm font-bold text-slate-300 hover:text-emerald-300"
+          className="mb-8 inline-flex items-center gap-2 text-sm font-bold text-slate-300 transition hover:text-emerald-300"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to room details
         </Link>
 
-        <div className="grid gap-10 lg:grid-cols-[1fr_480px]">
-          <section className="overflow-hidden rounded-[36px] border border-emerald-900/30 bg-white/3">
-            <div className="relative h-105 w-full">
+        <div className="grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_460px]">
+          <section className="overflow-hidden rounded-[34px] border border-emerald-500/10 bg-[#071713]/90 shadow-2xl shadow-black/30 backdrop-blur">
+            <div className="relative h-[360px] w-full overflow-hidden sm:h-[430px] lg:h-[500px]">
               <Image
                 src={image}
                 alt={room.name || "Study room"}
                 fill
                 unoptimized
+                priority
                 className="object-cover"
               />
 
-              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/10" />
+              <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#071713] to-transparent" />
 
-              <div className="absolute bottom-8 left-8 right-8">
-                <span className="rounded-full border border-emerald-400/30 bg-emerald-500/20 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-emerald-200">
+              <div className="absolute bottom-7 left-5 right-5 sm:bottom-9 sm:left-8 sm:right-8">
+                <span className="inline-flex rounded-full border border-emerald-300/25 bg-emerald-400/15 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-emerald-200 shadow-lg shadow-emerald-950/30">
                   Secure Booking
                 </span>
 
-                <h1 className="mt-5 text-4xl font-black tracking-tight text-white sm:text-5xl">
+                <h1 className="mt-5 max-w-4xl text-4xl font-black leading-[0.95] tracking-[-0.05em] text-white sm:text-5xl lg:text-6xl">
                   Book {room.name}
                 </h1>
 
-                <div className="mt-5 flex flex-wrap gap-5 text-sm font-semibold text-slate-200">
-                  <span className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-emerald-400" />
-                    {room.location}
-                  </span>
-
-                  <span className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-emerald-400" />
-                    Up to {room.capacity} people
-                  </span>
-
-                  <span className="flex items-center gap-2">
-                    <CalendarCheck className="h-5 w-5 text-emerald-400" />
-                    ৳{room.price}/hour
-                  </span>
+                <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm font-bold text-slate-100">
+                  <MetaItem icon={MapPin} value={room.location} />
+                  <MetaItem icon={Users} value={`Up to ${room.capacity} people`} />
+                  <MetaItem icon={CalendarCheck} value={`৳${room.price}/hour`} />
                 </div>
               </div>
             </div>
 
-            <div className="p-8">
-              <h2 className="text-2xl font-black text-white">
-                Booking Information
-              </h2>
+            <div className="p-6 sm:p-8 lg:p-10">
+              <div className="max-w-3xl">
+                <h2 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
+                  Booking Information
+                </h2>
 
-              <p className="mt-4 text-sm leading-7 text-slate-400">
-                Select a booking date and available time slots. Your booking
-                will be saved to MongoDB and shown inside your dashboard.
-              </p>
+                <p className="mt-4 text-sm leading-7 text-slate-400 sm:text-base">
+                  Select a booking date and available time slots. Your booking
+                  will be saved to MongoDB and shown inside your dashboard.
+                </p>
+              </div>
 
               <div className="mt-8 grid gap-4 md:grid-cols-3">
                 <InfoCard title="Room" value={room.name} />
@@ -149,7 +146,7 @@ export default function BookRoomPage() {
             </div>
           </section>
 
-          <aside className="lg:sticky lg:top-28 lg:self-start">
+          <aside className="xl:sticky xl:top-28">
             <BookingCalendar room={room} />
           </aside>
         </div>
@@ -158,14 +155,25 @@ export default function BookRoomPage() {
   );
 }
 
+function MetaItem({ icon: Icon, value }) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <Icon className="h-5 w-5 shrink-0 text-emerald-400" />
+      <span>{value}</span>
+    </span>
+  );
+}
+
 function InfoCard({ title, value }) {
   return (
-    <div className="rounded-3xl border border-emerald-900/30 bg-[#06110e] p-5">
-      <p className="text-xs font-bold uppercase tracking-widest text-slate-500">
+    <div className="min-h-[112px] rounded-[24px] border border-emerald-500/10 bg-[#03100d] p-5 shadow-xl shadow-black/10 transition hover:-translate-y-1 hover:border-emerald-400/25 hover:bg-[#041510]">
+      <p className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">
         {title}
       </p>
 
-      <p className="mt-2 font-black text-white">{value}</p>
+      <p className="mt-3 text-base font-black leading-snug text-white">
+        {value}
+      </p>
     </div>
   );
 }
