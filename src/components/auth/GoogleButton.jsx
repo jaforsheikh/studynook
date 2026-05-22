@@ -16,7 +16,7 @@ export default function GoogleButton({
       await authClient.signIn.social({
         provider: "google",
 
-        callbackURL: `${APP_URL}/dashboard`,
+        callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
 
         fetchOptions: {
           credentials: "include",
