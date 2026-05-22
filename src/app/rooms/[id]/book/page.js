@@ -55,7 +55,7 @@ export default function BookRoomPage() {
   if (isPending || loading) {
     return (
       <main className="min-h-screen bg-[#04100d] px-4 py-24 text-white sm:px-6">
-        <div className="mx-auto max-w-7xl rounded-[32px] border border-emerald-500/10 bg-white/[0.03] p-8 shadow-2xl shadow-black/30">
+        <div className="mx-auto max-w-7xl rounded-[32px] border border-emerald-500/10 bg-white/[0.03] p-8">
           <p className="text-sm font-medium text-slate-400">
             Loading booking page...
           </p>
@@ -83,8 +83,6 @@ export default function BookRoomPage() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#04100d] px-4 py-24 text-white sm:px-6">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.14),transparent_35%),radial-gradient(circle_at_top_right,rgba(59,130,246,0.08),transparent_35%)]" />
-
       <div className="mx-auto max-w-7xl">
         <Link
           href={`/rooms/${id}`}
@@ -94,8 +92,8 @@ export default function BookRoomPage() {
           Back to room details
         </Link>
 
-        <div className="grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_460px]">
-          <section className="overflow-hidden rounded-[34px] border border-emerald-500/10 bg-[#071713]/90 shadow-2xl shadow-black/30 backdrop-blur">
+        <div className="grid items-start gap-8">
+          <section className="overflow-hidden rounded-[34px] border border-emerald-500/10 bg-[#071713]/90 shadow-2xl shadow-black/30">
             <div className="relative h-[360px] w-full overflow-hidden sm:h-[430px] lg:h-[500px]">
               <Image
                 src={image}
@@ -110,7 +108,7 @@ export default function BookRoomPage() {
               <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#071713] to-transparent" />
 
               <div className="absolute bottom-7 left-5 right-5 sm:bottom-9 sm:left-8 sm:right-8">
-                <span className="inline-flex rounded-full border border-emerald-300/25 bg-emerald-400/15 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-emerald-200 shadow-lg shadow-emerald-950/30">
+                <span className="inline-flex rounded-full border border-emerald-300/25 bg-emerald-400/15 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-emerald-200">
                   Secure Booking
                 </span>
 
@@ -120,28 +118,36 @@ export default function BookRoomPage() {
 
                 <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm font-bold text-slate-100">
                   <MetaItem icon={MapPin} value={room.location} />
-                  <MetaItem icon={Users} value={`Up to ${room.capacity} people`} />
-                  <MetaItem icon={CalendarCheck} value={`৳${room.price}/hour`} />
+                  <MetaItem
+                    icon={Users}
+                    value={`Up to ${room.capacity} people`}
+                  />
+                  <MetaItem
+                    icon={CalendarCheck}
+                    value={`৳${room.price}/hour`}
+                  />
                 </div>
               </div>
             </div>
 
             <div className="p-6 sm:p-8 lg:p-10">
-              <div className="max-w-3xl">
-                <h2 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
-                  Booking Information
-                </h2>
+              <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+                <div>
+                  <h2 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
+                    Booking Information
+                  </h2>
 
-                <p className="mt-4 text-sm leading-7 text-slate-400 sm:text-base">
-                  Select a booking date and available time slots. Your booking
-                  will be saved to MongoDB and shown inside your dashboard.
-                </p>
-              </div>
+                  <p className="mt-4 max-w-xl text-sm leading-7 text-slate-400 sm:text-base">
+                    Select a booking date and available time slots. Your booking
+                    will be saved to MongoDB and shown inside your dashboard.
+                  </p>
+                </div>
 
-              <div className="mt-8 grid gap-4 md:grid-cols-3">
-                <InfoCard title="Room" value={room.name} />
-                <InfoCard title="Location" value={room.location} />
-                <InfoCard title="Hourly Price" value={`৳${room.price}`} />
+                <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+                  <InfoCard title="Room" value={room.name} />
+                  <InfoCard title="Location" value={room.location} />
+                  <InfoCard title="Hourly Price" value={`৳${room.price}`} />
+                </div>
               </div>
             </div>
           </section>
@@ -166,7 +172,7 @@ function MetaItem({ icon: Icon, value }) {
 
 function InfoCard({ title, value }) {
   return (
-    <div className="min-h-[112px] rounded-[24px] border border-emerald-500/10 bg-[#03100d] p-5 shadow-xl shadow-black/10 transition hover:-translate-y-1 hover:border-emerald-400/25 hover:bg-[#041510]">
+    <div className="min-h-[96px] rounded-[24px] border border-emerald-500/10 bg-[#03100d] p-5 shadow-xl shadow-black/10 transition hover:-translate-y-1 hover:border-emerald-400/25 hover:bg-[#041510]">
       <p className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">
         {title}
       </p>
